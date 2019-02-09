@@ -21,12 +21,12 @@
 		<StackPanel Grid.Column="0" Grid.Row="0" VerticalAlignment="Top" Margin="10">
 			<StackPanel Orientation="Horizontal">
 				<Label Content="Backup count:"/>
-				<Label Content="{Binding BackupCount, Converter={StaticResource BackupCountConverter}}"/>
+				<Label Content="{Binding Path=Settings.BackupCount, Converter={StaticResource BackupCountConverter}}"/>
 			</StackPanel>
 			<Slider TickPlacement="BottomRight"
 					Minimum="0"
 			        Maximum="25"
-					Value="{Binding BackupCount}"
+					Value="{Binding Path=Settings.BackupCount}"
 					IsSnapToTickEnabled="True"
 			        TickFrequency="1"/>
 		</StackPanel>

@@ -11,11 +11,13 @@ namespace sidesaver
 
 		public BindingList<string> Items { get; }
 		public int BackupCount { get; set; }
+		public UserSettings Settings { get; }
 
 		private Dictionary<int, FileBackupHandler> _fileHandlers;
 		private TrayIcon _icon;
+		private bool _exiting;
 
-		[System.STAThread]
+		[STAThread]
 		public static void Main()
 		{
 			SideSaver s = new SideSaver();
@@ -23,11 +25,14 @@ namespace sidesaver
 
 		private SideSaver()
 		{
-			BackupCount = 5; // default is 5
 			Items = new BindingList<string>();
+			Settings = new UserSettings();
 			instance = this;
+			_exiting = false;
+
 			Execute();
 			Cleanup();
+			Settings.Save();
 		}
 
 		private void Execute()
@@ -38,6 +43,21 @@ namespace sidesaver
 			App app = new App();
 			app.InitializeComponent();
 			app.Run();
+		}
+
+		public void HookMainWindow(MainWindow win)
+		{
+			win.Closing += OnMainWindowClose;
+		}
+
+		private void OnMainWindowClose(object sender, CancelEventArgs e)
+		{
+			if (!_exiting && sender is MainWindow win)
+			{
+				e.Cancel = true;
+				win.Hide();
+				_icon.PopupMessage("Sidesaver will continue running in the background...", 2);
+			}
 		}
 
 		private void Cleanup()
@@ -99,6 +119,7 @@ namespace sidesaver
 
 		public void ShutdownProgram()
 		{
+			_exiting = true;
 			Application.Current.Shutdown(0);
 		}
 	}

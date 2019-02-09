@@ -30,6 +30,11 @@ namespace sidesaver
 			_main.Items.ListChanged += OnListChanged;
 		}
 
+		public void PopupMessage(string msg, int timeout)
+		{
+			_icon.ShowBalloonTip(timeout, null, msg, ToolTipIcon.Info);
+		}
+
 		private ContextMenu BuildContextMenu()
 		{
 			MenuItem mu1 = new MenuItem("Show Window") {Index = 0};

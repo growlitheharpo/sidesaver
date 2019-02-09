@@ -12,6 +12,7 @@ namespace sidesaver
 		{
 			InitializeComponent();
 			DataContext = SideSaver.instance;
+			SideSaver.instance.HookMainWindow(this);
 		}
 
 		protected override void OnStateChanged(EventArgs e)
