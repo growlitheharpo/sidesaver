@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 
 namespace sidesaver
 {
@@ -6,11 +7,8 @@ namespace sidesaver
 	{
 		public static SideSaver instance { get; private set; }
 
-		public string MainScreenText
-		{
-			get { return "This is some stuff!"; }
-		}
-
+		private TrayIcon _icon;
+		
 		[System.STAThread]
 		public static void Main()
 		{
@@ -25,9 +23,21 @@ namespace sidesaver
 
 		private void Initialize()
 		{
+			_icon = new TrayIcon(this);
+
 			App app = new App();
 			app.InitializeComponent();
 			app.Run();
+		}
+
+		public void ShowWindow()
+		{
+			if (Application.Current.MainWindow == null)
+				Application.Current.MainWindow = new MainWindow();
+
+			Application.Current.MainWindow.Show();
+			Application.Current.MainWindow.WindowState = WindowState.Normal;
+			Application.Current.MainWindow.Focus();
 		}
 	}
 }

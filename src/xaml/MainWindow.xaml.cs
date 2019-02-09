@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
 namespace sidesaver
 {
@@ -11,6 +12,14 @@ namespace sidesaver
 		{
 			InitializeComponent();
 			DataContext = SideSaver.instance;
+		}
+
+		protected override void OnStateChanged(EventArgs e)
+		{
+			if (WindowState == WindowState.Minimized)
+				Hide();
+
+			base.OnStateChanged(e);
 		}
 	}
 }
