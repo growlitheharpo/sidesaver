@@ -66,19 +66,28 @@ namespace sidesaver
 			if (file != _watchedFile)
 				throw new ArgumentException($"New file \"{file}\" did not match base file \"{_watchedFile}\".");
 
-			string newFile = BuildBackupStringForFile(GetNewFileNumber());
+			PrepForBackup();
+			_currentBackupCount++;
+
+			string newFile = BuildBackupStringForFile(1);
+
 			File.Copy(_watchedFile, newFile, true);
 		}
 
-		private int GetNewFileNumber()
+		private void PrepForBackup()
 		{
+			// Deletes extra backups if there are any, and renames each of the existing ones by
+			// shifting it forward one number.
+			int maxBackups = SideSaver.instance.BackupCount;
+			maxBackups = maxBackups <= 0 ? int.MaxValue : maxBackups;
+
 			for (int i = _currentBackupCount; i > 0; --i)
 			{
-				int oldVal = i;
-				int newVal = i + 1;
+				var oldVal = i;
+				var newVal = i + 1;
 
-				string name = BuildBackupStringForFile(oldVal);
-				if (newVal > BACKUP_COUNT)
+				var name = BuildBackupStringForFile(oldVal);
+				if (newVal > maxBackups)
 				{
 					File.Delete(name);
 					--_currentBackupCount;
@@ -89,10 +98,6 @@ namespace sidesaver
 					fi.MoveTo(BuildBackupStringForFile(newVal));
 				}
 			}
-
-			_currentBackupCount++;
-
-			return 1;
 		}
 
 		private string BuildBackupStringForFile(int number)
