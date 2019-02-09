@@ -10,7 +10,6 @@ namespace sidesaver
 		public static SideSaver instance { get; private set; }
 
 		public BindingList<string> Items { get; }
-		public int BackupCount { get; set; }
 		public UserSettings Settings { get; }
 
 		private Dictionary<int, FileBackupHandler> _fileHandlers;

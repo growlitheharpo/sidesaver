@@ -11,10 +11,11 @@ namespace sidesaver
 	/// </summary>
 	public partial class OptionsWindow : Window
 	{
-		public OptionsWindow()
+		public OptionsWindow(UserSettings settings)
 		{
 			InitializeComponent();
 			Loaded += OnLoaded;
+			DataContext = settings;
 		}
 
 		private void OnLoaded(object sender, RoutedEventArgs e)

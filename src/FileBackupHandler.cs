@@ -111,7 +111,8 @@ namespace sidesaver
 
 			// Get our max backup count from sidesaver.instance
 			// If we're adding a new item, we subtract one from that.
-			int maxBackups = SideSaver.instance.BackupCount <= 0 ? int.MaxValue : SideSaver.instance.BackupCount;
+			int backupSetting = SideSaver.instance.Settings.BackupCount;
+			int maxBackups = backupSetting <= 0 ? int.MaxValue : backupSetting;
 			if (addingNewItem)
 				maxBackups -= 1;
 

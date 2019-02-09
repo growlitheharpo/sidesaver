@@ -38,7 +38,7 @@ namespace sidesaver
 
 		private void Settings_OnClick(object sender, RoutedEventArgs e)
 		{
-			OptionsWindow opt = new OptionsWindow {DataContext = DataContext};
+			OptionsWindow opt = new OptionsWindow(SideSaver.instance.Settings);
 			opt.Show();
 		}
 	}
