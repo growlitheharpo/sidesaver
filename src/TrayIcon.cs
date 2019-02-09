@@ -16,7 +16,7 @@ namespace sidesaver
 			_main = saverInstance;
 			_icon = new NotifyIcon();
 			
-			var u = new Uri("resources/main.ico", UriKind.Relative);
+			var u = new Uri("resources/main_white.ico", UriKind.Relative);
 			using (var stream = System.Windows.Application.GetResourceStream(u)?.Stream)
 				if (stream != null)
 					_icon.Icon = new System.Drawing.Icon(stream);
