@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 
@@ -92,6 +93,11 @@ namespace sidesaver
 			_fileHandlers.Remove(hash);
 
 			Items.Remove(filePath);
+		}
+
+		public void ShutdownProgram()
+		{
+			Application.Current.Shutdown(0);
 		}
 	}
 }
