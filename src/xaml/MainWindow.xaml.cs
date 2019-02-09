@@ -21,5 +21,18 @@ namespace sidesaver
 
 			base.OnStateChanged(e);
 		}
+
+		private void AddFile_OnClick(object sender, RoutedEventArgs e)
+		{
+			SideSaver.instance.AddNewFile();
+		}
+
+		private void MenuItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			FrameworkElement realSender = sender as FrameworkElement;
+
+			if (realSender?.DataContext is string filePath)
+				SideSaver.instance.StopWatching(filePath);
+		}
 	}
 }
