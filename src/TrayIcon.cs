@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using sidesaver.Properties;
 
 namespace sidesaver
 {
@@ -21,7 +22,7 @@ namespace sidesaver
 
 			_icon.Visible = true;
 			_icon.DoubleClick += OnDoubleClick;
-			_icon.Text = "Sidesaver is idle";
+			_icon.Text = Resources.TrayIcon_idle;
 
 			_main.Items.ListChanged += OnListChanged;
 		}
@@ -34,11 +35,11 @@ namespace sidesaver
 		private void OnListChanged(object sender, ListChangedEventArgs e)
 		{
 			if (_main.Items.Count == 0)
-				_icon.Text = "Sidesaver is idle";
+				_icon.Text = Resources.TrayIcon_idle;
 			else if (_main.Items.Count == 1)
-				_icon.Text = "Sidesaver is now watching 1 file.";
+				_icon.Text = Resources.TrayIcon_1_file;
 			else
-				_icon.Text = $"Sidesaver is now watching {_main.Items.Count} files.";
+				_icon.Text = string.Format(Resources.TrayIcon_plural_files, _main.Items.Count);
 		}
 	}
 }

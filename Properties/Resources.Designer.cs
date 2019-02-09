@@ -59,5 +59,32 @@ namespace sidesaver.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sidesaver is now watching 1 file..
+        /// </summary>
+        internal static string TrayIcon_1_file {
+            get {
+                return ResourceManager.GetString("TrayIcon_1_file", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sidesaver is idle.
+        /// </summary>
+        internal static string TrayIcon_idle {
+            get {
+                return ResourceManager.GetString("TrayIcon_idle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sidesaver is now watching {0} files..
+        /// </summary>
+        internal static string TrayIcon_plural_files {
+            get {
+                return ResourceManager.GetString("TrayIcon_plural_files", resourceCulture);
+            }
+        }
     }
 }
