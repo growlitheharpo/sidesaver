@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Windows;
 
 namespace sidesaver
 {
@@ -28,6 +29,18 @@ namespace sidesaver
 			set => _currentSettings._runInBackgroundPopupRan = value;
 		}
 
+		public string OverrideSaveLocation
+		{
+			get => _currentSettings._overrideSaveLocation;
+			set => _currentSettings._overrideSaveLocation = value;
+		}
+
+		public bool UseOverrideSaveLocation
+		{
+			get => _currentSettings._useOverrideSaveLocation;
+			set => _currentSettings._useOverrideSaveLocation = value;
+		}
+
 		public UserSettings()
 		{
 			_currentSettings = new SettingsBacking();
@@ -41,6 +54,8 @@ namespace sidesaver
 			BackupCount = 5;
 			RunInBackground = true;
 			RunInBackgroundPopShown = false;
+			UseOverrideSaveLocation = false;
+			OverrideSaveLocation = Environment.CurrentDirectory;
 		}
 
 		private bool Load()
@@ -67,7 +82,6 @@ namespace sidesaver
 				Directory.CreateDirectory(dataPath);
 
 			var filePath = Path.Combine(dataPath, "settings.ini");
-			//using (var s = File.OpenWrite(filePath))
 			using (var s = new FileStream(filePath, FileMode.Create))
 			using (var sw = new StreamWriter(s))
 				_currentSettings.WriteToFile(sw);
@@ -78,6 +92,8 @@ namespace sidesaver
 			public int _backupCount;
 			public bool _runInBackground;
 			public bool _runInBackgroundPopupRan;
+			public bool _useOverrideSaveLocation;
+			public string _overrideSaveLocation;
 
 			public void WriteToFile(StreamWriter w)
 			{

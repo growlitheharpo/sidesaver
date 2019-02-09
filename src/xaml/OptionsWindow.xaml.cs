@@ -11,11 +11,15 @@ namespace sidesaver
 	/// </summary>
 	public partial class OptionsWindow : Window
 	{
+		private UserSettings _settings;
+
 		public OptionsWindow(UserSettings settings)
 		{
+			_settings = settings;
+
 			InitializeComponent();
 			Loaded += OnLoaded;
-			DataContext = settings;
+			DataContext = _settings;
 		}
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
@@ -27,6 +31,11 @@ namespace sidesaver
 		private void OKButton_OnClick(object sender, RoutedEventArgs e)
 		{
 			Close();
+		}
+
+		private void BrowseButton_OnClick(object sender, RoutedEventArgs e)
+		{
+
 		}
 	}
 

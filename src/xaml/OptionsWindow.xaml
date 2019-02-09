@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:sidesaver"
         mc:Ignorable="d"
-        Title="Sidesaver - Settings" Height="200" Width="300">
+        Title="Sidesaver - Settings" Height="225" Width="300">
 	<Window.Resources>
 		<local:BackupCountConverter x:Key="BackupCountConverter"/>
 	</Window.Resources>
@@ -18,7 +18,7 @@
 		    <RowDefinition Height="40"></RowDefinition>
 		</Grid.RowDefinitions>
 
-		<StackPanel Grid.Column="0" Grid.Row="0" VerticalAlignment="Top" Margin="10">
+		<StackPanel Grid.Column="0" Grid.Row="0" VerticalAlignment="Top" Margin="10,10,10,0">
 			<StackPanel Orientation="Horizontal">
 				<Label Content="Backup count:"/>
 				<Label Content="{Binding BackupCount, Converter={StaticResource BackupCountConverter}}"/>
@@ -30,10 +30,22 @@
 					IsSnapToTickEnabled="True"
 			        TickFrequency="1"/>
 
-			<StackPanel Orientation="Horizontal" Margin="0,15,0,0">
-				<Label Content="Run in background:" VerticalAlignment="Center"/>
+			<StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+				<Label Content="Run in background:" VerticalAlignment="Center" MinWidth="145"/>
 				<CheckBox IsChecked="{Binding RunInBackground}" VerticalAlignment="Center"></CheckBox>
 			</StackPanel>
+
+			<StackPanel Orientation="Horizontal">
+				<Label Content="Override save location:" VerticalAlignment="Center" MinWidth="145"/>
+				<CheckBox IsChecked="{Binding UseOverrideSaveLocation}" VerticalAlignment="Center"></CheckBox>
+			</StackPanel>
+
+			<DockPanel>
+				<Button IsEnabled="{Binding UseOverrideSaveLocation}" DockPanel.Dock="Right"  Width="75" VerticalAlignment="Center" 
+				        Content="Browse..." Click="BrowseButton_OnClick"/>
+				<TextBox IsEnabled="{Binding UseOverrideSaveLocation}" Text="{Binding OverrideSaveLocation}" Margin="0,0,10,0" />
+			</DockPanel>
+
 		</StackPanel>
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
 			<Button Name="OKButton" Content="OK" Click="OKButton_OnClick" VerticalAlignment="Center" MinWidth="75" Margin="5"/>
