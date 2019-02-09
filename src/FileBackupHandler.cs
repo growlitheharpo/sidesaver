@@ -1,18 +1,26 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace sidesaver
 {
 	class FileBackupHandler : IDisposable
 	{
-		private const int BACKUP_COUNT = 5;
-
-		private int _currentBackupCount;
+		private readonly Regex _fileRegex;
 		private readonly string _watchedFile;
 		private readonly FileSystemWatcher _fileWatcher;
 
 		public int FileHash => _watchedFile.GetHashCode();
+
+		class BackupData
+		{
+			public string filePath;
+			public int fileNumber;
+		}
 
 		public void Dispose()
 		{
@@ -39,9 +47,8 @@ namespace sidesaver
 			_fileWatcher.Changed += OnFileChanged;
 			_fileWatcher.Renamed += OnFileRenamed;
 			_fileWatcher.EnableRaisingEvents = true;
-			
-			// TODO: Look at files in-folder to determine starting backup count
-			_currentBackupCount = 0;
+
+			_fileRegex = new Regex($"(?:{Path.GetFileNameWithoutExtension(_watchedFile)}.backup)(\\d+)(?:{Path.GetExtension(_watchedFile)})");
 		}
 
 		private void OnFileCreated(object sender, FileSystemEventArgs e)
@@ -66,36 +73,83 @@ namespace sidesaver
 			if (file != _watchedFile)
 				throw new ArgumentException($"New file \"{file}\" did not match base file \"{_watchedFile}\".");
 
-			PrepForBackup();
-			_currentBackupCount++;
-
+			ReconcileExistingBackups(true);
 			string newFile = BuildBackupStringForFile(1);
 
 			File.Copy(_watchedFile, newFile, true);
 		}
 
-		private void PrepForBackup()
+		private void ReconcileExistingBackups(bool addingNewItem)
 		{
-			// Deletes extra backups if there are any, and renames each of the existing ones by
-			// shifting it forward one number.
-			int maxBackups = SideSaver.instance.BackupCount;
-			maxBackups = maxBackups <= 0 ? int.MaxValue : maxBackups;
+			string dir = Path.GetDirectoryName(_watchedFile);
+			if (dir == null)
+				return;
 
-			for (int i = _currentBackupCount; i > 0; --i)
+			// Build a list of all the current backups so we can reconcile them
+			var allFiles = Directory.GetFiles(dir, "*" + Path.GetExtension(_watchedFile));
+			var currentBackups = new List<BackupData>(allFiles.Length);
+
+			// Filter the list of all files in this directory using a regex to
+			// match only files with ".backup" in the name
+			foreach (var filePath in allFiles)
 			{
-				var oldVal = i;
-				var newVal = i + 1;
+				string f = Path.GetFileName(filePath);
+				var m = _fileRegex.Match(f);
 
-				var name = BuildBackupStringForFile(oldVal);
-				if (newVal > maxBackups)
+				if (m.Length == 0)
+					continue;
+
+				currentBackups.Add(new BackupData()
 				{
-					File.Delete(name);
-					--_currentBackupCount;
-				}
-				else
+					filePath = filePath,
+					fileNumber = int.Parse(m.Groups[1].Value)
+				});
+			}
+
+			// They should already be sorted by GetFiles(), but we'll just double-check.
+			currentBackups.Sort((x, y) => x.fileNumber - y.fileNumber);
+
+			// Get our max backup count from sidesaver.instance
+			// If we're adding a new item, we subtract one from that.
+			int maxBackups = SideSaver.instance.BackupCount <= 0 ? int.MaxValue : SideSaver.instance.BackupCount;
+			if (addingNewItem)
+				maxBackups -= 1;
+
+			// Remove any backups that push us beyond the max limit
+			while (currentBackups.Count > maxBackups)
+			{
+				var target = currentBackups.Last();
+				if (File.Exists(target.filePath))
+					File.Delete(target.filePath);
+
+				currentBackups.RemoveAt(currentBackups.Count - 1);
+			}
+
+			// If we're adding a new item, we now need to loop through and rename all of our remaining files correctly
+			if (addingNewItem)
+			{
+				// Loop backwards through the list so we don't collide them with each other
+				for (int i = currentBackups.Count - 1; i >= 0; --i)
 				{
-					FileInfo fi = new FileInfo(name);
-					fi.MoveTo(BuildBackupStringForFile(newVal));
+					string newName = BuildBackupStringForFile(i + 2);
+
+					// It is possible that the user has been messing around with the files
+					// and now we're in a weird state where the file we want to move to
+					// already exists somehow. We catch this here.
+					int badIndex = currentBackups.FindIndex(x => x.filePath == newName);
+					if (badIndex >= 0)
+					{
+						string path = currentBackups[badIndex].filePath;
+						FileInfo badFile = new FileInfo(path);
+						path += ".tmp";
+
+						badFile.MoveTo(path);
+						currentBackups[badIndex].filePath = path;
+					}
+
+					FileInfo fi = new FileInfo(currentBackups[i].filePath);
+					fi.MoveTo(newName);
+					currentBackups[i].filePath = newName;
 				}
 			}
 		}
