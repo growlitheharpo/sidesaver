@@ -29,6 +29,11 @@
 					Value="{Binding BackupCount}"
 					IsSnapToTickEnabled="True"
 			        TickFrequency="1"/>
+
+			<StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+				<Label Content="Run in background:" VerticalAlignment="Center"/>
+				<CheckBox IsChecked="{Binding RunInBackground}" VerticalAlignment="Center"></CheckBox>
+			</StackPanel>
 		</StackPanel>
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
 			<Button Name="OKButton" Content="OK" Click="OKButton_OnClick" VerticalAlignment="Center" MinWidth="75" Margin="5"/>

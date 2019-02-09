@@ -16,6 +16,18 @@ namespace sidesaver
 			set => _currentSettings._backupCount = value;
 		}
 
+		public bool RunInBackground
+		{
+			get => _currentSettings._runInBackground;
+			set => _currentSettings._runInBackground = value;
+		}
+
+		public bool RunInBackgroundPopShown
+		{
+			get => _currentSettings._runInBackgroundPopupRan;
+			set => _currentSettings._runInBackgroundPopupRan = value;
+		}
+
 		public UserSettings()
 		{
 			_currentSettings = new SettingsBacking();
@@ -27,6 +39,8 @@ namespace sidesaver
 		private void MakeDefault()
 		{
 			BackupCount = 5;
+			RunInBackground = true;
+			RunInBackgroundPopShown = false;
 		}
 
 		private bool Load()
@@ -62,6 +76,8 @@ namespace sidesaver
 		private class SettingsBacking
 		{
 			public int _backupCount;
+			public bool _runInBackground;
+			public bool _runInBackgroundPopupRan;
 
 			public void WriteToFile(StreamWriter w)
 			{

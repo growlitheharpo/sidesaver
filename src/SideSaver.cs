@@ -51,11 +51,16 @@ namespace sidesaver
 
 		private void OnMainWindowClose(object sender, CancelEventArgs e)
 		{
-			if (!_exiting && sender is MainWindow win)
+			if (Settings.RunInBackground && !_exiting && sender is MainWindow win)
 			{
 				e.Cancel = true;
 				win.Hide();
-				_icon.PopupMessage("Sidesaver will continue running in the background...", 2);
+
+				if (!Settings.RunInBackgroundPopShown)
+				{
+					_icon.PopupMessage("Sidesaver will continue running in the background...", 2);
+					Settings.RunInBackgroundPopShown = true;
+				}
 			}
 		}
 
