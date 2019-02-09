@@ -34,5 +34,11 @@ namespace sidesaver
 			if (realSender?.DataContext is string filePath)
 				SideSaver.instance.StopWatching(filePath);
 		}
+
+		private void Settings_OnClick(object sender, RoutedEventArgs e)
+		{
+			OptionsWindow opt = new OptionsWindow {DataContext = DataContext};
+			opt.Show();
+		}
 	}
 }

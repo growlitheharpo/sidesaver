@@ -20,6 +20,7 @@
 		</Grid.RowDefinitions>
 
 		<Button Grid.Column="0" Grid.Row="0" Click="AddFile_OnClick" Content="Watch File" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" MinWidth="75"/>
+		<Button Grid.Column="0" Grid.Row="0" Click="Settings_OnClick" Content="Settings" HorizontalAlignment="Left" Margin="100,10,0,0" VerticalAlignment="Top" MinWidth="75"/>
 
 		<GridSplitter Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Height="6" VerticalAlignment="Center" ResizeDirection="Columns" ResizeBehavior="PreviousAndNext"/>
 

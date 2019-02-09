@@ -10,6 +10,7 @@ namespace sidesaver
 		public static SideSaver instance { get; private set; }
 
 		public BindingList<string> Items { get; }
+		public int BackupCount { get; set; }
 
 		private Dictionary<int, FileBackupHandler> _fileHandlers;
 		private TrayIcon _icon;
@@ -22,6 +23,7 @@ namespace sidesaver
 
 		private SideSaver()
 		{
+			BackupCount = 5; // default is 5
 			Items = new BindingList<string>();
 			instance = this;
 			Execute();
