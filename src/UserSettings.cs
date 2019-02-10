@@ -1,26 +1,36 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Windows;
 
 namespace sidesaver
 {
-	public class UserSettings
+	public class UserSettings : INotifyPropertyChanged
 	{
-		private SettingsBacking _currentSettings;
+		private readonly SettingsBacking _currentSettings;
 
 		public int BackupCount
 		{
 			get => _currentSettings._backupCount;
-			set => _currentSettings._backupCount = value;
+			set
+			{
+				_currentSettings._backupCount = value;
+				OnPropertyChanged();
+			}
 		}
 
 		public bool RunInBackground
 		{
 			get => _currentSettings._runInBackground;
-			set => _currentSettings._runInBackground = value;
+			set
+			{
+				_currentSettings._runInBackground = value;
+				OnPropertyChanged();
+			} 
 		}
 
 		public bool RunInBackgroundPopShown
@@ -32,13 +42,21 @@ namespace sidesaver
 		public string OverrideSaveLocation
 		{
 			get => _currentSettings._overrideSaveLocation;
-			set => _currentSettings._overrideSaveLocation = value;
+			set
+			{
+				_currentSettings._overrideSaveLocation = value;
+				OnPropertyChanged();
+			}
 		}
 
 		public bool UseOverrideSaveLocation
 		{
 			get => _currentSettings._useOverrideSaveLocation;
-			set => _currentSettings._useOverrideSaveLocation = value;
+			set 
+			{
+				_currentSettings._useOverrideSaveLocation = value;
+				OnPropertyChanged();
+			}
 		}
 
 		public UserSettings()
@@ -97,7 +115,7 @@ namespace sidesaver
 
 			public void WriteToFile(StreamWriter w)
 			{
-				Type t = this.GetType();
+				Type t = GetType();
 				var mems = t.GetFields(BindingFlags.Public | BindingFlags.Instance);
 
 				foreach (var m in mems)
@@ -143,6 +161,13 @@ namespace sidesaver
 						throw new TypeLoadException($"Type ({member.FieldType.Name} is not serializable by default.");
 				}
 			}
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
 }
