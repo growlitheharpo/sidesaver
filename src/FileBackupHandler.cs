@@ -79,9 +79,16 @@ namespace sidesaver
 			File.Copy(_watchedFile, newFile, true);
 		}
 
+		private string GetBackupDirectory()
+		{
+			if (SideSaver.instance.Settings.UseOverrideSaveLocation)
+				return SideSaver.instance.Settings.OverrideSaveLocation;
+			return Path.GetDirectoryName(_watchedFile);
+		}
+
 		private void ReconcileExistingBackups(bool addingNewItem)
 		{
-			string dir = Path.GetDirectoryName(_watchedFile);
+			string dir = GetBackupDirectory();
 			if (dir == null)
 				return;
 
@@ -159,7 +166,7 @@ namespace sidesaver
 		{
 			StringBuilder sb = new StringBuilder();
 
-			sb.Append(Path.GetDirectoryName(_watchedFile));
+			sb.Append(GetBackupDirectory());
 			sb.Append("\\");
 			sb.Append(Path.GetFileNameWithoutExtension(_watchedFile));
 			sb.Append(".backup");

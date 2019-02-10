@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:sidesaver"
         mc:Ignorable="d"
-        Title="Sidesaver - Settings" Height="225" Width="300">
+        Title="Sidesaver - Settings" Height="225" Width="500">
 	<Window.Resources>
 		<local:BackupCountConverter x:Key="BackupCountConverter"/>
 	</Window.Resources>
@@ -31,12 +31,12 @@
 			        TickFrequency="1"/>
 
 			<StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-				<Label Content="Run in background:" VerticalAlignment="Center" MinWidth="145"/>
+				<Label Content="Run in background:" VerticalAlignment="Center" MinWidth="165"/>
 				<CheckBox IsChecked="{Binding RunInBackground}" VerticalAlignment="Center"></CheckBox>
 			</StackPanel>
 
 			<StackPanel Orientation="Horizontal">
-				<Label Content="Override save location:" VerticalAlignment="Center" MinWidth="145"/>
+				<Label Content="Override save location:" VerticalAlignment="Center" MinWidth="165"/>
 				<CheckBox IsChecked="{Binding UseOverrideSaveLocation}" VerticalAlignment="Center"></CheckBox>
 			</StackPanel>
 
