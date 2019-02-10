@@ -7,12 +7,16 @@
 
 This is a very early version of Sidesaver with just enough functionality to support a simple workflow. It will run in the background while you work. Everytime you save, it will copy the file, and save the new copy as a backup.
 
+![Sidesaver's main interface](./img/main_window.png)
+
 * The user can add files to the Sidesaver watch list to specify which files should be backed up
 * The user can specify whether Sidesaver should run in the background from the tray when closed
 * The user can specify a particular "backup location" where all backups will be saved (if unspecified, they will be saved side-by-side with the original)
 * The user can choose how many backups to save (specifying 1 to 25, or an "infinite" number)
 * Sidesaver will reconcile backup states between program instances, using the ".backup" extension as a way to track what it previously did
 * User settings are persisted across sessions
+
+![Sidesaver's settings interface](./img/settings_window.png)
 
 Sidesaver is still pretty simple and does [exactly what it says on the tin](https://tvtropes.org/pmwiki/pmwiki.php/Main/ExactlyWhatItSaysOnTheTin). 
 
