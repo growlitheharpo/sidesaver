@@ -61,6 +61,26 @@ namespace sidesaver.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sidesaver will immediately stop creating backups of all watched files.
+        ///
+        ///Stop watching and exit?.
+        /// </summary>
+        internal static string SideSaver_CloseWarningMessage {
+            get {
+                return ResourceManager.GetString("SideSaver_CloseWarningMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quit Sidesaver?.
+        /// </summary>
+        internal static string SideSaver_CloseWarningTitle {
+            get {
+                return ResourceManager.GetString("SideSaver_CloseWarningTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sidesaver is now watching 1 file..
         /// </summary>
         internal static string TrayIcon_1_file {

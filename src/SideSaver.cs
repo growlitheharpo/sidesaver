@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Forms;
+using sidesaver.Properties;
+using Application = System.Windows.Application;
 
 namespace sidesaver
 {
@@ -51,16 +54,27 @@ namespace sidesaver
 
 		private void OnMainWindowClose(object sender, CancelEventArgs e)
 		{
-			if (Settings.RunInBackground && !_exiting && sender is MainWindow win)
+			if (sender is MainWindow win && !_exiting)
 			{
-				e.Cancel = true;
-				win.Hide();
-
-				if (!Settings.RunInBackgroundPopShown)
+				if (Settings.RunInBackground)
 				{
-					_icon.PopupMessage("Sidesaver will continue running in the background...", 2);
-					Settings.RunInBackgroundPopShown = true;
+					e.Cancel = true;
+					win.Hide();
+
+					if (!Settings.RunInBackgroundPopShown)
+					{
+						_icon.PopupMessage("Sidesaver will continue running in the background...", 2);
+						Settings.RunInBackgroundPopShown = true;
+					}
 				}
+				/* else if (Items.Count > 0) // Disabling this for now because it's kind of annoying
+				{
+					if (System.Windows.Forms.MessageBox.Show(
+						Resources.SideSaver_CloseWarningMessage,
+						Resources.SideSaver_CloseWarningTitle,
+						MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+							e.Cancel = true;
+				} */
 			}
 		}
 

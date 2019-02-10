@@ -123,4 +123,12 @@
 	<data name="TrayIcon_plural_files" xml:space="preserve">
     <value>Sidesaver is now watching {0} files.</value>
   </data>
+	<data name="SideSaver_CloseWarningMessage" xml:space="preserve">
+    <value>Sidesaver will immediately stop creating backups of all watched files.
+
+Stop watching and exit?</value>
+  </data>
+	<data name="SideSaver_CloseWarningTitle" xml:space="preserve">
+    <value>Quit Sidesaver?</value>
+  </data>
 </root>
