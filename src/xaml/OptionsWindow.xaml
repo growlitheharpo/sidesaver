@@ -31,7 +31,7 @@
 			        TickFrequency="1"/>
 
 			<StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-				<Label Content="Run in background:" VerticalAlignment="Center" MinWidth="165"/>
+				<Label Content="Stay open in background:" VerticalAlignment="Center" MinWidth="165"/>
 				<CheckBox IsChecked="{Binding RunInBackground}" VerticalAlignment="Center"></CheckBox>
 			</StackPanel>
 

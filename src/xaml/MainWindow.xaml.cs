@@ -41,5 +41,10 @@ namespace sidesaver
 			OptionsWindow opt = new OptionsWindow(SideSaver.instance.Settings);
 			opt.Show();
 		}
+
+		private void HideWindow_OnClick(object sender, RoutedEventArgs e)
+		{
+			Hide();
+		}
 	}
 }
