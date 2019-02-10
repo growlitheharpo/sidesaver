@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace sidesaver
 {
@@ -35,7 +36,18 @@ namespace sidesaver
 
 		private void BrowseButton_OnClick(object sender, RoutedEventArgs e)
 		{
+			CommonOpenFileDialog dialog = new CommonOpenFileDialog
+			{
+				InitialDirectory = _settings.OverrideSaveLocation,
+				IsFolderPicker = true,
+				EnsurePathExists = true,
+				ShowPlacesList = true,
+				Multiselect = false
+			};
+			if (dialog.ShowDialog(this) != CommonFileDialogResult.Ok)
+				return;
 
+			_settings.OverrideSaveLocation = dialog.FileName;
 		}
 	}
 
