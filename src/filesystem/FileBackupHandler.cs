@@ -10,19 +10,28 @@ namespace sidesaver
 {
 	class FileBackupHandler : IDisposable
 	{
-		private readonly Regex _fileRegex;
-		private readonly string _watchedFile;
-		private readonly FileSystemWatcher _fileWatcher;
-
+		public delegate void BackupFileRenamedHandler(object sender, BackupFileRenamedEventArgs e);
 		public int FileHash => _watchedFile.GetHashCode();
+		public string FilePath => _watchedFile;
 
-		class BackupData
+		private Regex _fileRegex;
+		private string _watchedFile;
+		private FileSystemWatcher _fileWatcher;
+
+		private class BackupData
 		{
 			public string filePath;
 			public int fileNumber;
 		}
 
-		public void Dispose()
+		public event BackupFileRenamedHandler FileRenamed;
+
+		public FileBackupHandler(string file)
+		{
+			InitializeForFile(file);
+		}
+
+		private void TeardownFileWatcher()
 		{
 			if (_fileWatcher != null)
 			{
@@ -33,7 +42,7 @@ namespace sidesaver
 			}
 		}
 
-		public FileBackupHandler(string file)
+		private void InitializeForFile(string file)
 		{
 			_watchedFile = file;
 
@@ -51,6 +60,11 @@ namespace sidesaver
 			_fileRegex = new Regex($"(?:{Path.GetFileNameWithoutExtension(_watchedFile)}.backup)(\\d+)(?:{Path.GetExtension(_watchedFile)})");
 		}
 
+		public void Dispose()
+		{
+			TeardownFileWatcher();
+		}
+
 		private void OnFileCreated(object sender, FileSystemEventArgs e)
 		{
 			CopyAndSaveFile(e.FullPath);
@@ -63,9 +77,16 @@ namespace sidesaver
 
 		private void OnFileRenamed(object sender, RenamedEventArgs e)
 		{
-			// TODO: This will throw an exception. How do we handle this gracefully
-			// with the current use of hashes?
-			CopyAndSaveFile(e.FullPath);
+			var eventArgs = new BackupFileRenamedEventArgs() {NewName = e.FullPath, OriginalName = e.OldFullPath};
+			FileRenamed?.Invoke(this, eventArgs);
+
+			Regex oldFileRegex = _fileRegex;
+
+			TeardownFileWatcher();
+			InitializeForFile(e.FullPath);
+
+			var oldBackups = GenerateListOfBackups(oldFileRegex);
+			ReconcileExistingBackups(oldBackups, false);
 		}
 
 		private void CopyAndSaveFile(string file)
@@ -73,7 +94,7 @@ namespace sidesaver
 			if (file != _watchedFile)
 				throw new ArgumentException($"New file \"{file}\" did not match base file \"{_watchedFile}\".");
 
-			ReconcileExistingBackups(true);
+			ReconcileExistingBackups(null, true);
 			string newFile = BuildBackupStringForFile(1);
 
 			File.Copy(_watchedFile, newFile, true);
@@ -86,11 +107,11 @@ namespace sidesaver
 			return Path.GetDirectoryName(_watchedFile);
 		}
 
-		private void ReconcileExistingBackups(bool addingNewItem)
+		private List<BackupData> GenerateListOfBackups(Regex pattern)
 		{
 			string dir = GetBackupDirectory();
 			if (dir == null)
-				return;
+				return null;
 
 			// Build a list of all the current backups so we can reconcile them
 			var allFiles = Directory.GetFiles(dir, "*" + Path.GetExtension(_watchedFile));
@@ -101,7 +122,7 @@ namespace sidesaver
 			foreach (var filePath in allFiles)
 			{
 				string f = Path.GetFileName(filePath);
-				var m = _fileRegex.Match(f);
+				var m = pattern.Match(f);
 
 				if (m.Length == 0)
 					continue;
@@ -115,6 +136,15 @@ namespace sidesaver
 
 			// They should already be sorted by GetFiles(), but we'll just double-check.
 			currentBackups.Sort((x, y) => x.fileNumber - y.fileNumber);
+			return currentBackups;
+		}
+
+		private void ReconcileExistingBackups(List<BackupData> currentBackups, bool addingNewItem)
+		{
+			if (currentBackups == null)
+				currentBackups = GenerateListOfBackups(_fileRegex);
+			if (currentBackups == null)
+				return;
 
 			// Get our max backup count from sidesaver.instance
 			// If we're adding a new item, we subtract one from that.
@@ -133,32 +163,30 @@ namespace sidesaver
 				currentBackups.RemoveAt(currentBackups.Count - 1);
 			}
 
-			// If we're adding a new item, we now need to loop through and rename all of our remaining files correctly
-			if (addingNewItem)
+			// Rename all of our files to reconcile them with the current name of the file
+			// and our current max count.
+			// We loop backwards through the list so we don't collide them with each other
+			for (int i = currentBackups.Count - 1; i >= 0; --i)
 			{
-				// Loop backwards through the list so we don't collide them with each other
-				for (int i = currentBackups.Count - 1; i >= 0; --i)
+				string newName = BuildBackupStringForFile(i + 2);
+
+				// It is possible that the user has been messing around with the files
+				// and now we're in a weird state where the file we want to move to
+				// already exists somehow. We catch this here.
+				int badIndex = currentBackups.FindIndex(x => x.filePath == newName);
+				if (badIndex >= 0)
 				{
-					string newName = BuildBackupStringForFile(i + 2);
+					string path = currentBackups[badIndex].filePath;
+					FileInfo badFile = new FileInfo(path);
+					path += ".tmp";
 
-					// It is possible that the user has been messing around with the files
-					// and now we're in a weird state where the file we want to move to
-					// already exists somehow. We catch this here.
-					int badIndex = currentBackups.FindIndex(x => x.filePath == newName);
-					if (badIndex >= 0)
-					{
-						string path = currentBackups[badIndex].filePath;
-						FileInfo badFile = new FileInfo(path);
-						path += ".tmp";
-
-						badFile.MoveTo(path);
-						currentBackups[badIndex].filePath = path;
-					}
-
-					FileInfo fi = new FileInfo(currentBackups[i].filePath);
-					fi.MoveTo(newName);
-					currentBackups[i].filePath = newName;
+					badFile.MoveTo(path);
+					currentBackups[badIndex].filePath = path;
 				}
+
+				FileInfo fi = new FileInfo(currentBackups[i].filePath);
+				fi.MoveTo(newName);
+				currentBackups[i].filePath = newName;
 			}
 		}
 

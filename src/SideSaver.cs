@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Forms;
-using sidesaver.Properties;
 using Application = System.Windows.Application;
 
 namespace sidesaver
@@ -82,7 +80,10 @@ namespace sidesaver
 		private void Cleanup()
 		{
 			foreach (var f in _fileHandlers)
+			{
+				f.Value.FileRenamed -= OnFileRenamed;
 				f.Value.Dispose();
+			}
 		}
 
 		public void ShowWindow()
@@ -118,8 +119,31 @@ namespace sidesaver
 					continue;
 
 				var handler = new FileBackupHandler(path);
+				handler.FileRenamed += OnFileRenamed;
 				_fileHandlers.Add(handler.FileHash, handler);
 				Items.Add(path);
+			}
+		}
+
+		private void OnFileRenamed(object sender, BackupFileRenamedEventArgs e)
+		{
+			if (_fileHandlers.ContainsKey(e.OriginalHash))
+			{
+				if (_fileHandlers.ContainsKey(e.NewHash))
+				{
+					throw new InvalidOperationException(
+						$"New file {e.NewName} has the same hash as an existing file: {_fileHandlers[e.NewHash].FilePath }");
+				}
+
+				_fileHandlers[e.NewHash] = _fileHandlers[e.OriginalHash];
+				_fileHandlers.Remove(e.OriginalHash);
+			}
+
+			int index = Items.IndexOf(e.OriginalName);
+			if (index >= 0)
+			{
+				Items[index] = e.NewName;
+				Items.ResetItem(index);
 			}
 		}
 
