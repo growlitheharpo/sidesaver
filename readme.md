@@ -15,6 +15,8 @@ This is a very early version of Sidesaver with just enough functionality to supp
 * The user can choose how many backups to save (specifying 1 to 25, or an "infinite" number)
 * Sidesaver will reconcile backup states between program instances, using the ".backup" extension as a way to track what it previously did
 * User settings are persisted across sessions
+* Sidesaver can recognize when a file is renamed, and will rename all the backups accordingly
+  * Note - Renaming a file to one of the backup names (i.e. *originalname*.backup1) will cause a program crash if in side-by-side mode.
 
 ![Sidesaver's settings interface](./img/settings_window.png)
 
@@ -22,4 +24,4 @@ Sidesaver is still pretty simple and does [exactly what it says on the tin](http
 
 Some big limitations:
 * It will not remember which files it was watching between program sessions.
-* You cannot specify the naming convention of the backup files (yet!)
+* You cannot specify the naming convention of the backup files
