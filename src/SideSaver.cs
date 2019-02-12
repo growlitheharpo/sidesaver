@@ -68,14 +68,6 @@ namespace sidesaver
 						Settings.RunInBackgroundPopShown = true;
 					}
 				}
-				/* else if (Items.Count > 0) // Disabling this for now because it's kind of annoying
-				{
-					if (System.Windows.Forms.MessageBox.Show(
-						Resources.SideSaver_CloseWarningMessage,
-						Resources.SideSaver_CloseWarningTitle,
-						MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
-							e.Cancel = true;
-				} */
 			}
 		}
 
