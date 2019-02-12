@@ -35,6 +35,7 @@ namespace sidesaver
 			_icon = new TrayIcon(this);
 
 			Execute();
+
 			Cleanup();
 			_settings.SaveToDisk();
 		}
@@ -143,10 +144,7 @@ namespace sidesaver
 			{
 				int index = Items.IndexOf(e.OriginalName);
 				if (index >= 0)
-				{
 					Items[index] = e.NewName;
-					Items.ResetItem(index);
-				}
 			});
 		}
 
