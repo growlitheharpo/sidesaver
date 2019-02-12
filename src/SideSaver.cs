@@ -171,16 +171,15 @@ namespace sidesaver
 
 		public void CreateSettingsMenu()
 		{
-			NotifyChangedUserSettings tmpSettings = new NotifyChangedUserSettings();
-			tmpSettings.ApplySettings(_settings);
-
+			NotifyChangedUserSettings tmpSettings = new NotifyChangedUserSettings(_settings);
 			OptionsWindow newWin = new OptionsWindow(tmpSettings);
 			newWin.Show();
 		}
 
-		public void CommitNewSettings(IUserSettings newSettings)
+		public void CommitNewSettings(NotifyChangedUserSettings newSettings)
 		{
 			_settings.ApplySettings(newSettings);
+			newSettings.ResetPendingChanges();
 		}
 	}
 }

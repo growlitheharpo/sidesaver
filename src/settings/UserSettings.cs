@@ -6,6 +6,20 @@ namespace sidesaver
 {
 	public class NotifyChangedUserSettings : INotifyPropertyChanged, IUserSettings
 	{
+		private bool _hasPendingChanges;
+		public bool HasPendingChanges
+		{
+			get => _hasPendingChanges;
+			set
+			{
+				if (_hasPendingChanges != value)
+				{
+					_hasPendingChanges = value;
+					OnPropertyChanged();
+				}
+			}
+		}
+
 		private int _backupCount;
 		public int BackupCount
 		{
@@ -64,14 +78,24 @@ namespace sidesaver
 			}
 		}
 
-		public NotifyChangedUserSettings()
+		public NotifyChangedUserSettings(IUserSettings other = null)
 		{
-			ResetToDefault();
+			if (other != null)
+				ApplySettings(other);
+			else
+				ResetToDefault();
+
+			HasPendingChanges = false;
 		}
 		
 		public void ResetToDefault()
 		{
 			ApplySettings(SettingsUtils.GetDefaultSettings());
+		}
+
+		public void ResetPendingChanges()
+		{
+			HasPendingChanges = false;
 		}
 
 		public void ApplySettings(IUserSettings other)
@@ -87,6 +111,9 @@ namespace sidesaver
 
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
+			if (propertyName != null && propertyName != "HasPendingChanges")
+				HasPendingChanges = true;
+
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}

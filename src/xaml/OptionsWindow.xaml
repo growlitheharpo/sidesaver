@@ -49,6 +49,8 @@
 		</StackPanel>
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
 			<Button Name="OKButton" Content="OK" Click="OKButton_OnClick" VerticalAlignment="Center" MinWidth="75" Margin="5"/>
+			<Button Content="Cancel" Click="CancelButton_OnClick" VerticalAlignment="Center" MinWidth="75" Margin="5"/>
+			<Button Content="Apply" IsEnabled="{Binding HasPendingChanges}" Click="ApplyButton_OnClick" VerticalAlignment="Center" MinWidth="75" Margin="5"/>
 		</StackPanel>
 	</Grid>
 </Window>

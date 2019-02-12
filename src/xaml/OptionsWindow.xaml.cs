@@ -11,9 +11,9 @@ namespace sidesaver
 	/// </summary>
 	public partial class OptionsWindow
 	{
-		private readonly IUserSettings _settings;
+		private readonly NotifyChangedUserSettings _settings;
 
-		public OptionsWindow(IUserSettings settings)
+		public OptionsWindow(NotifyChangedUserSettings settings)
 		{
 			_settings = settings;
 
@@ -26,11 +26,6 @@ namespace sidesaver
 		{
 			Loaded -= OnLoaded;
 			OKButton.Focus();
-		}
-
-		private void OKButton_OnClick(object sender, RoutedEventArgs e)
-		{
-			Close();
 		}
 
 		private void BrowseButton_OnClick(object sender, RoutedEventArgs e)
@@ -47,6 +42,22 @@ namespace sidesaver
 				return;
 
 			_settings.OverrideSaveLocationPath = dialog.FileName;
+		}
+
+		private void OKButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			ApplyButton_OnClick(sender, e);
+			Close();
+		}
+
+		private void ApplyButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			SideSaver.instance.CommitNewSettings(_settings);
+		}
+
+		private void CancelButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			Close();
 		}
 	}
 
