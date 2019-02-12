@@ -139,12 +139,15 @@ namespace sidesaver
 				_fileHandlers.Remove(e.OriginalHash);
 			}
 
-			int index = Items.IndexOf(e.OriginalName);
-			if (index >= 0)
+			Application.Current.Dispatcher.Invoke(() =>
 			{
-				Items[index] = e.NewName;
-				Items.ResetItem(index);
-			}
+				int index = Items.IndexOf(e.OriginalName);
+				if (index >= 0)
+				{
+					Items[index] = e.NewName;
+					Items.ResetItem(index);
+				}
+			});
 		}
 
 		public void StopWatching(string filePath)
