@@ -1,14 +1,8 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Configuration;
 using System.Drawing;
-using System.IO;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace sidesaver
@@ -18,8 +12,6 @@ namespace sidesaver
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		private ImageSource _imageSource;
-
 		public MainWindow()
 		{
 			InitializeComponent();
