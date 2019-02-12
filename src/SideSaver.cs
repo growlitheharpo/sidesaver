@@ -13,7 +13,7 @@ namespace sidesaver
 		public BindingList<string> Items { get; }
 		public IUserSettings Settings => _settings;
 
-		private readonly UserSettings _settings;
+		private readonly PersistentUserSettings _settings;
 		private readonly Dictionary<int, FileBackupHandler> _fileHandlers;
 		private readonly TrayIcon _icon;
 		private bool _exiting;
@@ -31,12 +31,12 @@ namespace sidesaver
 			Items = new BindingList<string>();
 
 			_fileHandlers = new Dictionary<int, FileBackupHandler>();
-			_settings = new UserSettings();
+			_settings = new PersistentUserSettings();
 			_icon = new TrayIcon(this);
 
 			Execute();
 			Cleanup();
-			_settings.Save();
+			_settings.SaveToDisk();
 		}
 
 		private void Execute()
@@ -167,6 +167,20 @@ namespace sidesaver
 		{
 			_exiting = true;
 			Application.Current.Shutdown(0);
+		}
+
+		public void CreateSettingsMenu()
+		{
+			NotifyChangedUserSettings tmpSettings = new NotifyChangedUserSettings();
+			tmpSettings.ApplySettings(_settings);
+
+			OptionsWindow newWin = new OptionsWindow(tmpSettings);
+			newWin.Show();
+		}
+
+		public void CommitNewSettings(IUserSettings newSettings)
+		{
+			_settings.ApplySettings(newSettings);
 		}
 	}
 }

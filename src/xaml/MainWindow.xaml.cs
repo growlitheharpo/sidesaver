@@ -38,8 +38,7 @@ namespace sidesaver
 
 		private void Settings_OnClick(object sender, RoutedEventArgs e)
 		{
-			OptionsWindow opt = new OptionsWindow(SideSaver.instance.Settings);
-			opt.Show();
+			SideSaver.instance.CreateSettingsMenu();
 		}
 
 		private void HideWindow_OnClick(object sender, RoutedEventArgs e)

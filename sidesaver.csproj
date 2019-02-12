@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="src\filesystem\BackupFileRenamedEventArgs.cs" />
     <Compile Include="src\settings\IUserSettings.cs" />
+    <Compile Include="src\settings\PersistentUserSettings.cs" />
     <Compile Include="src\settings\UserSettings.cs" />
     <Compile Include="src\xaml\OptionsWindow.xaml.cs">
       <DependentUpon>OptionsWindow.xaml</DependentUpon>
