@@ -21,6 +21,7 @@ namespace sidesaver
 		[STAThread]
 		public static void Main()
 		{
+			AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolver.OnAssemblyResolve;
 			SideSaver s = new SideSaver();
 		}
 
