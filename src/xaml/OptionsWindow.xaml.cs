@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Input;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace sidesaver
@@ -10,11 +9,11 @@ namespace sidesaver
 	/// <summary>
 	/// Interaction logic for OptionsWindow.xaml
 	/// </summary>
-	public partial class OptionsWindow : Window
+	public partial class OptionsWindow
 	{
-		private UserSettings _settings;
+		private readonly IUserSettings _settings;
 
-		public OptionsWindow(UserSettings settings)
+		public OptionsWindow(IUserSettings settings)
 		{
 			_settings = settings;
 
@@ -38,7 +37,7 @@ namespace sidesaver
 		{
 			CommonOpenFileDialog dialog = new CommonOpenFileDialog
 			{
-				InitialDirectory = _settings.OverrideSaveLocation,
+				InitialDirectory = _settings.OverrideSaveLocationPath,
 				IsFolderPicker = true,
 				EnsurePathExists = true,
 				ShowPlacesList = true,
@@ -47,7 +46,7 @@ namespace sidesaver
 			if (dialog.ShowDialog(this) != CommonFileDialogResult.Ok)
 				return;
 
-			_settings.OverrideSaveLocation = dialog.FileName;
+			_settings.OverrideSaveLocationPath = dialog.FileName;
 		}
 	}
 

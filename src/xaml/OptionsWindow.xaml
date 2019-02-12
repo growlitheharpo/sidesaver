@@ -43,7 +43,7 @@
 			<DockPanel>
 				<Button IsEnabled="{Binding UseOverrideSaveLocation}" DockPanel.Dock="Right"  Width="75" VerticalAlignment="Center" 
 				        Content="Browse..." Click="BrowseButton_OnClick"/>
-				<TextBox IsEnabled="{Binding UseOverrideSaveLocation}" Text="{Binding OverrideSaveLocation}" Margin="0,0,10,0" />
+				<TextBox IsEnabled="{Binding UseOverrideSaveLocation}" Text="{Binding OverrideSaveLocationPath}" Margin="0,0,10,0" />
 			</DockPanel>
 
 		</StackPanel>

@@ -13,10 +13,11 @@ namespace sidesaver
 		public static SideSaver instance { get; private set; }
 
 		public BindingList<string> Items { get; }
-		public UserSettings Settings { get; }
+		public IUserSettings Settings => _settings;
 
-		private Dictionary<int, FileBackupHandler> _fileHandlers;
-		private TrayIcon _icon;
+		private readonly UserSettings _settings;
+		private readonly Dictionary<int, FileBackupHandler> _fileHandlers;
+		private readonly TrayIcon _icon;
 		private bool _exiting;
 
 		[STAThread]
@@ -27,21 +28,21 @@ namespace sidesaver
 
 		private SideSaver()
 		{
-			Items = new BindingList<string>();
-			Settings = new UserSettings();
 			instance = this;
-			_exiting = false;
+
+			Items = new BindingList<string>();
+
+			_fileHandlers = new Dictionary<int, FileBackupHandler>();
+			_settings = new UserSettings();
+			_icon = new TrayIcon(this);
 
 			Execute();
 			Cleanup();
-			Settings.Save();
+			_settings.Save();
 		}
 
 		private void Execute()
 		{
-			_icon = new TrayIcon(this);
-			_fileHandlers = new Dictionary<int, FileBackupHandler>();
-
 			App app = new App();
 			app.InitializeComponent();
 			app.Run();

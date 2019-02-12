@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace sidesaver
 {
-	public class UserSettings : INotifyPropertyChanged
+	public class UserSettings : INotifyPropertyChanged, IUserSettings
 	{
 		private readonly SettingsBacking _currentSettings;
 
@@ -39,7 +39,7 @@ namespace sidesaver
 			set => _currentSettings._runInBackgroundPopupRan = value;
 		}
 
-		public string OverrideSaveLocation
+		public string OverrideSaveLocationPath
 		{
 			get => _currentSettings._overrideSaveLocation;
 			set
@@ -73,7 +73,7 @@ namespace sidesaver
 			RunInBackground = true;
 			RunInBackgroundPopShown = false;
 			UseOverrideSaveLocation = false;
-			OverrideSaveLocation = Environment.CurrentDirectory;
+			OverrideSaveLocationPath = Environment.CurrentDirectory;
 		}
 
 		private bool Load()

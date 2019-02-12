@@ -82,7 +82,7 @@ namespace sidesaver
 		private string GetBackupDirectory()
 		{
 			if (SideSaver.instance.Settings.UseOverrideSaveLocation)
-				return SideSaver.instance.Settings.OverrideSaveLocation;
+				return SideSaver.instance.Settings.OverrideSaveLocationPath;
 			return Path.GetDirectoryName(_watchedFile);
 		}
 

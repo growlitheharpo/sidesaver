@@ -63,7 +63,8 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\UserSettings.cs" />
+    <Compile Include="src\settings\IUserSettings.cs" />
+    <Compile Include="src\settings\UserSettings.cs" />
     <Compile Include="src\xaml\OptionsWindow.xaml.cs">
       <DependentUpon>OptionsWindow.xaml</DependentUpon>
     </Compile>
@@ -75,7 +76,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="src\FileBackupHandler.cs" />
+    <Compile Include="src\filesystem\FileBackupHandler.cs" />
     <Compile Include="src\SideSaver.cs" />
     <Compile Include="src\TrayIcon.cs" />
     <Compile Include="src\xaml\App.xaml.cs">
