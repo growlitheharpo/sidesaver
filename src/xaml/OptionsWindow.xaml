@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:sidesaver"
         mc:Ignorable="d"
-        Title="Sidesaver - Settings" Height="225" Width="500">
+        Title="Sidesaver - Settings" Height="225" Width="500" WindowStartupLocation="CenterOwner">
 	<Window.Resources>
 		<local:BackupCountConverter x:Key="BackupCountConverter"/>
 	</Window.Resources>
