@@ -43,7 +43,12 @@ namespace sidesaver
 			MenuItem mu2 = new MenuItem("Exit") {Index = 1};
 			mu2.Click += OnExitClick;
 
-			return new ContextMenu(new[] { mu1, mu2});;
+			ContextMenu c = new ContextMenu();
+			c.MenuItems.Add(mu1);
+			c.MenuItems.Add("-");
+			c.MenuItems.Add(mu2);
+
+			return c;
 		}
 
 		private void OnDoubleClick(object sender, EventArgs e)

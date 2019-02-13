@@ -7,10 +7,17 @@
         xmlns:sidesaver="clr-namespace:sidesaver"
         mc:Ignorable="d"
         Title="Sidesaver" Height="450" Width="800" MinWidth="350" MinHeight="150"
-        Icon="../../resources/main_white.ico">
+        Icon="../../resources/main_white.ico"
+        BorderThickness="0.5">
 	<Window.Resources>
 		<Style x:Key="StyleButton_Base" TargetType="Button">
 			<Setter Property="MinWidth" Value="85"/>
+		</Style>
+		<Style x:Key="HeaderText_Base" TargetType="TextBlock">
+			<Setter Property="HorizontalAlignment" Value="Left"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="FontFamily" Value="Century Gothic"/>
+			<Setter Property="Foreground" Value="DarkGray"/>
 		</Style>
 	</Window.Resources>
 	<WindowChrome.WindowChrome>
@@ -29,7 +36,7 @@
 			<RowDefinition Height="45"></RowDefinition>
 		</Grid.RowDefinitions>
 		<Thumb Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" DragDelta="Thumb_OnDragDelta" Opacity="0"/>
-		<sidesaver:CustomWindowControl Grid.Row="0" Grid.Column="1"/>
+		<sidesaver:CustomWindowControl Grid.Row="0" Grid.Column="1" Margin="0,0.5,0.5,0"/>
 
 		<ListBox Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" ItemsSource="{Binding Items}" Background="WhiteSmoke" Margin="10,10,10,0">
 			<ListBox.ItemTemplate>
@@ -59,13 +66,13 @@
 			        Content="Hide Window" Click="HideWindow_OnClick"/>
 		</StackPanel>
 
-		<Grid Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2">
+		<Grid Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Margin="0,10,0,0" >
 			<Image Name="IconImage"
 			       MaxWidth="50" MaxHeight="100" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0"/>
-			<TextBlock  HorizontalAlignment="Left" VerticalAlignment="Center" Margin="50,10,0,0"
-			       Text="idesaver" FontSize="18" FontFamily="Century Gothic" FontWeight="SemiBold" Foreground="DarkGray"/>
-			<TextBlock  HorizontalAlignment="Left" VerticalAlignment="Center" Margin="140,15,0,0" Foreground="DarkGray"
-			            Text="An Iterative Backup Engine" FontSize="12" FontFamily="Century Gothic" FontWeight="Light"/>
-			</Grid>
+			<TextBlock Style="{StaticResource HeaderText_Base}" Margin="40,8,0,0" FontSize="18" FontWeight="SemiBold"
+			       Text="idesaver" />
+			<TextBlock Style="{StaticResource HeaderText_Base}" Margin="140,12,0,0" FontSize="12" FontWeight="Light"
+			           Text="An Iterative Backup Engine"/>
+		</Grid>
 	</Grid>
 </Window>
