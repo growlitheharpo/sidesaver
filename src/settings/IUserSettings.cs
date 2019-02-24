@@ -6,6 +6,7 @@ namespace sidesaver
 	{
 		int BackupCount { get; set; }
 		
+		bool RunOnStartup { get; set; }
 		bool RunInBackground { get; set; }
 		bool RunInBackgroundPopShown { get; set; }
 
@@ -21,6 +22,7 @@ namespace sidesaver
 		private class UtilImpl : IUserSettings
 		{
 			public int BackupCount { get; set; }
+			public bool RunOnStartup { get; set; }
 			public bool RunInBackground { get; set; }
 			public bool RunInBackgroundPopShown { get; set; }
 			public bool UseOverrideSaveLocation { get; set; }
@@ -34,6 +36,7 @@ namespace sidesaver
 			return new UtilImpl
 			{
 				BackupCount = 5,
+				RunOnStartup = false,
 				RunInBackground = true,
 				RunInBackgroundPopShown = false,
 				UseOverrideSaveLocation = false,
@@ -44,6 +47,7 @@ namespace sidesaver
 		public static void CopySettings(IUserSettings src, IUserSettings dst)
 		{
 			dst.BackupCount = src.BackupCount;
+			dst.RunOnStartup = src.RunOnStartup;
 			dst.RunInBackground = src.RunInBackground;
 			dst.RunInBackgroundPopShown = src.RunInBackgroundPopShown;
 			dst.UseOverrideSaveLocation = src.UseOverrideSaveLocation;

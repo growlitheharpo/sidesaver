@@ -16,6 +16,12 @@ namespace sidesaver
 			set => _currentSettings._backupCount = value;
 		}
 
+		public bool RunOnStartup
+		{
+			get => _currentSettings._runOnStartup;
+			set => _currentSettings._runOnStartup = value;
+		}
+
 		public bool RunInBackground
 		{
 			get => _currentSettings._runInBackground;
@@ -90,6 +96,7 @@ namespace sidesaver
 		private class SerializedBacking
 		{
 			public int _backupCount;
+			public bool _runOnStartup;
 			public bool _runInBackground;
 			public bool _runInBackgroundPopupRan;
 			public bool _useOverrideSaveLocation;

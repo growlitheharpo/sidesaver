@@ -34,6 +34,20 @@ namespace sidesaver
 			}
 		}
 
+		private bool _runOnStartup;
+		public bool RunOnStartup
+		{
+			get => _runOnStartup;
+			set
+			{
+				if (_runOnStartup != value)
+				{
+					_runOnStartup = value;
+					OnPropertyChanged();
+				}
+			}
+		}
+
 		private bool _runInBackground;
 		public bool RunInBackground
 		{
