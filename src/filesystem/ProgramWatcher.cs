@@ -9,6 +9,8 @@ namespace sidesaver
 	internal class ProgramWatcher
 	{
 		private readonly TrayIcon _iconRef;
+
+		private readonly object _processStateLock = new object();
 		private readonly Dictionary<string, bool> _targetProcessStates;
 		private readonly Thread _watcherThread;
 
@@ -33,13 +35,13 @@ namespace sidesaver
 		public void UpdateWatchedPrograms(IList<string> programs)
 		{
 			string[] keys;
-			lock (_targetProcessStates)
+			lock (_processStateLock)
 				keys = _targetProcessStates.Keys.ToArray();
 
 			var toAdd = new List<string>(programs.Where(p => !keys.Contains(p)));
 			var toRemove = new List<string>(keys.Where(k => !programs.Contains(k)));
 
-			lock (_targetProcessStates)
+			lock (_processStateLock)
 			{
 				foreach (var r in toRemove)
 					_targetProcessStates.Remove(r);
@@ -83,14 +85,15 @@ namespace sidesaver
 				allPaths.Sort();
 				bool anyNewInstances = false;
 
-				lock (_targetProcessStates)
+				lock (_processStateLock)
 				{
-					foreach (var watching in _targetProcessStates)
+					var targetCopy = new Dictionary<string, bool>(_targetProcessStates);
+					foreach (var watching in targetCopy)
 					{
 						int index = allPaths.BinarySearch(watching.Key);
 						if (index >= 0) // Process is running
 						{
-							if (watching.Value == false)
+							if (watching.Value == false) // it wasn't running last time
 							{
 								_targetProcessStates[watching.Key] = true;
 								anyNewInstances = true;
