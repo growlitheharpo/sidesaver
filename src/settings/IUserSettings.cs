@@ -25,7 +25,7 @@ namespace sidesaver
 		{
 			public int BackupCount { get => 5; set => throw new InvalidOperationException(); }
 
-			public IList<string> WatchedPrograms { get => new string[]{"C:\\aprogram", "C:\\twoprogram\\hello\\goodbyte",}; set => throw new InvalidOperationException(); }
+			public IList<string> WatchedPrograms { get => new string[]{}; set => throw new InvalidOperationException(); }
 			public bool RunOnStartup { get => false; set => throw new InvalidOperationException(); }
 			public bool RunInBackground { get => true; set => throw new InvalidOperationException(); }
 			public bool RunInBackgroundPopShown { get => false; set => throw new InvalidOperationException(); }
