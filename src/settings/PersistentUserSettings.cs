@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace sidesaver
@@ -14,6 +16,12 @@ namespace sidesaver
 		{
 			get => _currentSettings._backupCount;
 			set => _currentSettings._backupCount = value;
+		}
+
+		public IList<string> WatchedPrograms
+		{
+			get => _currentSettings._watchedProgramList;
+			set => _currentSettings._watchedProgramList = value.ToList();
 		}
 
 		public bool RunOnStartup
@@ -101,6 +109,7 @@ namespace sidesaver
 			public bool _runInBackgroundPopupRan;
 			public bool _useOverrideSaveLocation;
 			public string _overrideSaveLocation;
+			public List<string> _watchedProgramList = new List<string>();
 
 			public void WriteToFile(StreamWriter w)
 			{
@@ -109,9 +118,50 @@ namespace sidesaver
 
 				foreach (var m in mems)
 				{
-					string s = $"[{m.Name}] {m.GetValue(this)}";
-					w.WriteLine(s);
+					if (m.FieldType == typeof(List<string>))
+					{
+						WriteStringArray(w, m.Name, m.GetValue(this) as List<string>);
+					}
+					else
+					{
+						string s = $"[{m.Name}] {m.GetValue(this)}";
+						w.WriteLine(s);
+					}
 				}
+			}
+
+			private void WriteStringArray(StreamWriter w, string name, List<string> list)
+			{
+				if (w == null)
+					return;
+
+				if (list == null)
+					return;
+
+				StringBuilder sb = new StringBuilder();
+				sb.AppendFormat("[{0}] ", name);
+				foreach (var s in list)
+				{
+					if (s.Contains(','))
+						throw new InvalidOperationException("Cannot serialize an array with commas in it.");
+
+					sb.AppendFormat("{0},", s);
+				}
+
+				if (list.Count > 0)
+					sb.Remove(sb.Length - 1, 1); // remove the last comma
+
+				w.Write(sb.ToString());
+			}
+
+			private void ReadStringArray(List<string> v, string lineVal)
+			{
+				if (v == null)
+					return;
+
+				v.Clear();
+				string[] vals = lineVal.Split(',');
+				v.AddRange(vals);
 			}
 
 			public void ReadFromFile(StreamReader r)
@@ -146,6 +196,8 @@ namespace sidesaver
 						member.SetValue(this, bool.Parse(memVal));
 					else if (member.FieldType == typeof(string))
 						member.SetValue(this, memVal);
+					else if (member.FieldType == typeof(List<string>))
+						ReadStringArray(member.GetValue(this) as List<string>, memVal);
 					else
 						throw new TypeLoadException($"Type ({member.FieldType.Name} is not serializable by default.");
 				}

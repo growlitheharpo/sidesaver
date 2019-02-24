@@ -38,8 +38,7 @@ namespace sidesaver
 			_icon = new TrayIcon(this);
 			_watcher = new ProgramWatcher(_icon);
 
-			// Once we've loaded our settings, update our startup setting
-			ApplyStartupSetting(_settings.RunOnStartup);
+			CommitNewSettings(_settings);
 
 			Execute();
 
@@ -177,12 +176,14 @@ namespace sidesaver
 			newWin.Focus();
 		}
 
-		public void CommitNewSettings(NotifyChangedUserSettings newSettings)
+		public void CommitNewSettings(IUserSettings newSettings)
 		{
 			_settings.ApplySettings(newSettings);
-			newSettings.ResetPendingChanges();
+			if (newSettings is NotifyChangedUserSettings changeSettings)
+				changeSettings.ResetPendingChanges();
 
 			ApplyStartupSetting(_settings.RunOnStartup);
+			_watcher.UpdateWatchedPrograms(_settings.WatchedPrograms);
 		}
 
 		private void ApplyStartupSetting(bool shouldRunOnStartup)

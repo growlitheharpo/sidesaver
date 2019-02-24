@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -29,6 +30,32 @@ namespace sidesaver
 				if (_backupCount != value)
 				{
 					_backupCount = value;
+					OnPropertyChanged();
+				}
+			}
+		}
+
+		private BindingList<string> _watchedProgramsBindable = new BindingList<string>();
+		public BindingList<string> WatchedProgramsBindable
+		{
+			get => _watchedProgramsBindable;
+			set
+			{
+				if (!ReferenceEquals(_watchedProgramsBindable, value))
+				{
+					_watchedProgramsBindable = new BindingList<string>(value);
+					OnPropertyChanged();
+				}
+			}
+		}
+		public IList<string> WatchedPrograms
+		{
+			get => _watchedProgramsBindable;
+			set
+			{
+				if (!ReferenceEquals(_watchedProgramsBindable, value))
+				{
+					_watchedProgramsBindable = new BindingList<string>(value);
 					OnPropertyChanged();
 				}
 			}

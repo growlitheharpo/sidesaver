@@ -79,6 +79,37 @@ namespace sidesaver
 		{
 			Close();
 		}
+
+		private void MenuItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			FrameworkElement realSender = sender as FrameworkElement;
+
+			if (realSender?.DataContext is string filePath)
+				_settings.WatchedPrograms.Remove(filePath);
+		}
+
+		private void AddProgram_OnClick(object sender, RoutedEventArgs e)
+		{
+			var fileDialog = new Microsoft.Win32.OpenFileDialog
+			{
+				Multiselect = false,
+				AddExtension = true,
+				CheckFileExists = true,
+				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)
+			};
+			fileDialog.Multiselect = true;
+
+			if (fileDialog.ShowDialog(Application.Current.MainWindow) != true)
+				return;
+
+			foreach (var path in fileDialog.FileNames)
+			{
+				if (_settings.WatchedPrograms.Contains(path))
+					continue;
+
+				_settings.WatchedPrograms.Add(path);
+			}
+		}
 	}
 
 	public class BackupCountConverter : IValueConverter

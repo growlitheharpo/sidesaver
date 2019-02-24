@@ -5,9 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:sidesaver"
         mc:Ignorable="d"
-        Title="Sidesaver - Settings" Height="250" Width="500" WindowStartupLocation="CenterOwner">
+        Title="Sidesaver - Settings" Height="375" Width="500" WindowStartupLocation="CenterOwner">
 	<Window.Resources>
 		<local:BackupCountConverter x:Key="BackupCountConverter"/>
+		<Style x:Key="StyleButton_Base" TargetType="Button">
+			<Setter Property="MinWidth" Value="85"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+		</Style>
 	</Window.Resources>
     <Grid>
 		<Grid.ColumnDefinitions>
@@ -46,16 +50,38 @@
 			</StackPanel>
 
 			<DockPanel>
-				<Button IsEnabled="{Binding UseOverrideSaveLocation}" DockPanel.Dock="Right"  Width="75" VerticalAlignment="Center" 
+				<Button Style="{StaticResource StyleButton_Base}" IsEnabled="{Binding UseOverrideSaveLocation}" DockPanel.Dock="Right"
 				        Content="Browse..." Click="BrowseButton_OnClick"/>
 				<TextBox IsEnabled="{Binding UseOverrideSaveLocation}" Text="{Binding OverrideSaveLocationPath}" Margin="0,0,10,0" />
 			</DockPanel>
 
+			<StackPanel Margin="0,5,0,0">
+				<Label Content="Remind-On-Launch programs:"/>
+				<ListBox ItemsSource="{Binding WatchedProgramsBindable}" Background="WhiteSmoke" Height="70">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<StackPanel Orientation="Horizontal">
+								<TextBlock Text="{Binding}">
+									<TextBlock.ContextMenu>
+										<ContextMenu>
+											<MenuItem Header="Remove" Click="MenuItem_OnClick"/>
+										</ContextMenu>
+									</TextBlock.ContextMenu>
+								</TextBlock>
+							</StackPanel>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+					<Button Content="Add Program" Style="{StaticResource StyleButton_Base}" Margin="0,5,0,0" Click="AddProgram_OnClick"/>
+				</StackPanel>
+			</StackPanel>
+
 		</StackPanel>
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
-			<Button Name="OKButton" Content="OK" Click="OKButton_OnClick" VerticalAlignment="Center" MinWidth="75" Margin="5"/>
-			<Button Content="Cancel" Click="CancelButton_OnClick" VerticalAlignment="Center" MinWidth="75" Margin="5"/>
-			<Button Content="Apply" IsEnabled="{Binding HasPendingChanges}" Click="ApplyButton_OnClick" VerticalAlignment="Center" MinWidth="75" Margin="5"/>
+			<Button Name="OKButton" Content="OK" Click="OKButton_OnClick" Margin="5" Style="{StaticResource StyleButton_Base}"/>
+			<Button Content="Cancel" Click="CancelButton_OnClick" Margin="5" Style="{StaticResource StyleButton_Base}"/>
+			<Button Content="Apply" IsEnabled="{Binding HasPendingChanges}" Click="ApplyButton_OnClick" Margin="5" Style="{StaticResource StyleButton_Base}"/>
 		</StackPanel>
 	</Grid>
 </Window>
