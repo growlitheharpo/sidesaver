@@ -1,12 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using sidesaver.Properties;
 
 namespace sidesaver
 {
-	class TrayIcon
+	internal class TrayIcon
 	{
 		private readonly NotifyIcon _icon;
 		private readonly SideSaver _main;

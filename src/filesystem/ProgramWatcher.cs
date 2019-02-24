@@ -6,10 +6,10 @@ using System.Threading;
 
 namespace sidesaver
 {
-	class ProgramWatcher
+	internal class ProgramWatcher
 	{
 		private readonly TrayIcon _iconRef;
-		private readonly Dictionary<string, bool> _targetProcesStates;
+		private readonly Dictionary<string, bool> _targetProcessStates;
 		private readonly Thread _watcherThread;
 
 		private bool _shouldShutdown;
@@ -22,12 +22,31 @@ namespace sidesaver
 
 		public ProgramWatcher(TrayIcon icon)
 		{
-			_targetProcesStates = new Dictionary<string, bool>();
+			_targetProcessStates = new Dictionary<string, bool>();
 			_watcherThread = new Thread(ProgramWatcherThread);
 			_iconRef = icon;
 
 			_shouldShutdown = false;
 			_watcherThread.Start();
+		}
+
+		public void UpdateWatchedPrograms(IList<string> programs)
+		{
+			string[] keys;
+			lock (_targetProcessStates)
+				keys = _targetProcessStates.Keys.ToArray();
+
+			var toAdd = new List<string>(programs.Where(p => !keys.Contains(p)));
+			var toRemove = new List<string>(keys.Where(k => !programs.Contains(k)));
+
+			lock (_targetProcessStates)
+			{
+				foreach (var r in toRemove)
+					_targetProcessStates.Remove(r);
+
+				foreach (var a in toAdd)
+					_targetProcessStates.Add(a, false);
+			}
 		}
 
 		public void Kill()
@@ -64,22 +83,22 @@ namespace sidesaver
 				allPaths.Sort();
 				bool anyNewInstances = false;
 
-				lock (_targetProcesStates)
+				lock (_targetProcessStates)
 				{
-					foreach (var watching in _targetProcesStates)
+					foreach (var watching in _targetProcessStates)
 					{
 						int index = allPaths.BinarySearch(watching.Key);
 						if (index >= 0) // Process is running
 						{
 							if (watching.Value == false)
 							{
-								_targetProcesStates[watching.Key] = true;
+								_targetProcessStates[watching.Key] = true;
 								anyNewInstances = true;
 							}
 						}
 						else // Process is not running
 						{
-							_targetProcesStates[watching.Key] = false;
+							_targetProcessStates[watching.Key] = false;
 						}
 					}
 				}
