@@ -47,11 +47,7 @@ namespace sidesaver
 
 		public void ApplySettings(IUserSettings other)
 		{
-			BackupCount = other.BackupCount;
-			RunInBackground = other.RunInBackground;
-			RunInBackgroundPopShown = other.RunInBackgroundPopShown;
-			UseOverrideSaveLocation = other.UseOverrideSaveLocation;
-			OverrideSaveLocationPath = other.OverrideSaveLocationPath;
+			SettingsUtils.CopySettings(other, this);
 		}
 
 		public PersistentUserSettings()

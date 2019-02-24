@@ -87,7 +87,12 @@ namespace sidesaver
 
 			HasPendingChanges = false;
 		}
-		
+
+		public void ApplySettings(IUserSettings other)
+		{
+			SettingsUtils.CopySettings(other, this);
+		}
+
 		public void ResetToDefault()
 		{
 			ApplySettings(SettingsUtils.GetDefaultSettings());
@@ -96,15 +101,6 @@ namespace sidesaver
 		public void ResetPendingChanges()
 		{
 			HasPendingChanges = false;
-		}
-
-		public void ApplySettings(IUserSettings other)
-		{
-			BackupCount = other.BackupCount;
-			RunInBackground = other.RunInBackground;
-			RunInBackgroundPopShown = other.RunInBackgroundPopShown;
-			UseOverrideSaveLocation = other.UseOverrideSaveLocation;
-			OverrideSaveLocationPath = other.OverrideSaveLocationPath;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

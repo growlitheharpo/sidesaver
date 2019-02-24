@@ -40,5 +40,14 @@ namespace sidesaver
 				OverrideSaveLocationPath = Environment.CurrentDirectory,
 			};
 		}
+
+		public static void CopySettings(IUserSettings src, IUserSettings dst)
+		{
+			dst.BackupCount = src.BackupCount;
+			dst.RunInBackground = src.RunInBackground;
+			dst.RunInBackgroundPopShown = src.RunInBackgroundPopShown;
+			dst.UseOverrideSaveLocation = src.UseOverrideSaveLocation;
+			dst.OverrideSaveLocationPath = src.OverrideSaveLocationPath;
+		}
 	}
 }
