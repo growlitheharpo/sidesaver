@@ -16,6 +16,7 @@ namespace sidesaver
 
 		private readonly PersistentUserSettings _settings;
 		private readonly Dictionary<int, FileBackupHandler> _fileHandlers;
+		private readonly ProgramWatcher _watcher;
 		private readonly TrayIcon _icon;
 		private bool _exiting;
 
@@ -35,6 +36,7 @@ namespace sidesaver
 			_fileHandlers = new Dictionary<int, FileBackupHandler>();
 			_settings = new PersistentUserSettings();
 			_icon = new TrayIcon(this);
+			_watcher = new ProgramWatcher(_icon);
 
 			// Once we've loaded our settings, update our startup setting
 			ApplyStartupSetting(_settings.RunOnStartup);
@@ -82,6 +84,8 @@ namespace sidesaver
 				f.Value.FileRenamed -= OnFileRenamed;
 				f.Value.Dispose();
 			}
+
+			_watcher.Kill();
 		}
 
 		public void ShowWindow()

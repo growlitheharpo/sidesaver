@@ -109,7 +109,7 @@ namespace sidesaver
 
 		public void ResetToDefault()
 		{
-			ApplySettings(SettingsUtils.GetDefaultSettings());
+			ApplySettings(SettingsUtils.Defaults);
 		}
 
 		public void ResetPendingChanges()
