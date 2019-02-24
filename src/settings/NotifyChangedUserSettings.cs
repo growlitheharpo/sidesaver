@@ -35,7 +35,7 @@ namespace sidesaver
 			}
 		}
 
-		private BindingList<string> _watchedProgramsBindable = new BindingList<string>();
+		private BindingList<string> _watchedProgramsBindable;
 		public BindingList<string> WatchedProgramsBindable
 		{
 			get => _watchedProgramsBindable;
@@ -121,6 +121,9 @@ namespace sidesaver
 
 		public NotifyChangedUserSettings(IUserSettings other = null)
 		{
+			_watchedProgramsBindable = new BindingList<string>();
+			_watchedProgramsBindable.ListChanged += (sender, args) => HasPendingChanges = true;
+
 			if (other != null)
 				ApplySettings(other);
 			else

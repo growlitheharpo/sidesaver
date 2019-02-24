@@ -29,6 +29,12 @@ namespace sidesaver
 			_main.Items.ListChanged += OnListChanged;
 		}
 
+		public void Kill()
+		{
+			_icon.Visible = false;
+			_icon.Dispose();
+		}
+
 		public void PopupMessage(string msg, int timeout)
 		{
 			_icon.ShowBalloonTip(timeout, null, msg, ToolTipIcon.Info);

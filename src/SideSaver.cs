@@ -85,6 +85,7 @@ namespace sidesaver
 			}
 
 			_watcher.Kill();
+			_icon.Kill();
 		}
 
 		public void ShowWindow()
