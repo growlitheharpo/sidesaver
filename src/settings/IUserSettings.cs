@@ -19,30 +19,20 @@ namespace sidesaver
 
 	public static class SettingsUtils
 	{
-		private class UtilImpl : IUserSettings
+		private class DefaultImpl : IUserSettings
 		{
-			public int BackupCount { get; set; }
-			public bool RunOnStartup { get; set; }
-			public bool RunInBackground { get; set; }
-			public bool RunInBackgroundPopShown { get; set; }
-			public bool UseOverrideSaveLocation { get; set; }
-			public string OverrideSaveLocationPath { get; set; }
+			public int BackupCount { get => 5; set => throw new InvalidOperationException(); }
+			public bool RunOnStartup { get => false; set => throw new InvalidOperationException(); }
+			public bool RunInBackground { get => true; set => throw new InvalidOperationException(); }
+			public bool RunInBackgroundPopShown { get => false; set => throw new InvalidOperationException(); }
+			public bool UseOverrideSaveLocation { get => false; set => throw new InvalidOperationException(); }
+			public string OverrideSaveLocationPath { get => Environment.CurrentDirectory; set => throw new InvalidOperationException(); }
+
 			public void ResetToDefault() {}
 			public void ApplySettings(IUserSettings other) {}
 		}
 
-		public static IUserSettings GetDefaultSettings()
-		{
-			return new UtilImpl
-			{
-				BackupCount = 5,
-				RunOnStartup = false,
-				RunInBackground = true,
-				RunInBackgroundPopShown = false,
-				UseOverrideSaveLocation = false,
-				OverrideSaveLocationPath = Environment.CurrentDirectory,
-			};
-		}
+		public static IUserSettings Defaults  => new DefaultImpl();
 
 		public static void CopySettings(IUserSettings src, IUserSettings dst)
 		{

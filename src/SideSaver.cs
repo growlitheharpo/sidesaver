@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
 using System.Windows;
 using Application = System.Windows.Application;
 
@@ -34,6 +35,9 @@ namespace sidesaver
 			_fileHandlers = new Dictionary<int, FileBackupHandler>();
 			_settings = new PersistentUserSettings();
 			_icon = new TrayIcon(this);
+
+			// Once we've loaded our settings, update our startup setting
+			ApplyStartupSetting(_settings.RunOnStartup);
 
 			Execute();
 
@@ -173,6 +177,38 @@ namespace sidesaver
 		{
 			_settings.ApplySettings(newSettings);
 			newSettings.ResetPendingChanges();
+
+			ApplyStartupSetting(_settings.RunOnStartup);
+		}
+
+		private void ApplyStartupSetting(bool shouldRunOnStartup)
+		{
+			const string startupKeyName = @"Software\\Microsoft\\Windows\\CurrentVersion\\Run";
+			const string startupValueName = "Sidesaver";
+
+			var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(startupKeyName, true);
+			if (key == null)
+			{
+				Microsoft.Win32.Registry.SetValue("HKEY_CURRENT_USER\\" + startupKeyName, startupValueName, "");
+				key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(startupKeyName, true);
+
+				if (key == null)
+					return;
+			}
+
+			using (key)
+			{
+				if (shouldRunOnStartup)
+				{
+					string path = $"\"{Assembly.GetEntryAssembly().Location}\"";
+					key.SetValue(startupValueName, path);
+				}
+				else
+				{
+					if (key.GetValue(startupValueName) != null)
+						key.DeleteValue(startupValueName);
+				}
+			}
 		}
 	}
 }

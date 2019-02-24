@@ -10,7 +10,7 @@ using System.Windows;
 [assembly: AssemblyTitle("Sidesaver")]
 [assembly: AssemblyDescription("A simple iterative backup engine")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Sidesaver")]
 [assembly: AssemblyProduct("sidesaver")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]

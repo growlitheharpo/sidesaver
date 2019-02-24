@@ -48,7 +48,7 @@ namespace sidesaver
 
 		public void ResetToDefault()
 		{
-			ApplySettings(SettingsUtils.GetDefaultSettings());
+			ApplySettings(SettingsUtils.Defaults);
 		}
 
 		public void ApplySettings(IUserSettings other)
@@ -59,9 +59,9 @@ namespace sidesaver
 		public PersistentUserSettings()
 		{
 			_currentSettings = new SerializedBacking();
+			ResetToDefault();
 
-			if (!LoadFromDisk())
-				ResetToDefault();
+			LoadFromDisk();
 		}
 
 		public bool LoadFromDisk()
