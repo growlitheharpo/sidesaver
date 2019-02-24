@@ -163,8 +163,10 @@ namespace sidesaver
 		public void CreateSettingsMenu()
 		{
 			NotifyChangedUserSettings tmpSettings = new NotifyChangedUserSettings(_settings);
-			OptionsWindow newWin = new OptionsWindow(tmpSettings) { Owner = Application.Current.MainWindow };
+			OptionsWindow newWin = OptionsWindow.Create(tmpSettings);
+			newWin.Owner = Application.Current.MainWindow;
 			newWin.Show();
+			newWin.Focus();
 		}
 
 		public void CommitNewSettings(NotifyChangedUserSettings newSettings)
