@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:sidesaver"
         mc:Ignorable="d"
-        Title="Sidesaver - Settings" Height="225" Width="500" WindowStartupLocation="CenterOwner">
+        Title="Sidesaver - Settings" Height="250" Width="500" WindowStartupLocation="CenterOwner">
 	<Window.Resources>
 		<local:BackupCountConverter x:Key="BackupCountConverter"/>
 	</Window.Resources>
@@ -33,6 +33,11 @@
 			<StackPanel Orientation="Horizontal" Margin="0,5,0,0">
 				<Label Content="Stay open in background:" VerticalAlignment="Center" MinWidth="165"/>
 				<CheckBox IsChecked="{Binding RunInBackground}" VerticalAlignment="Center"></CheckBox>
+			</StackPanel>
+
+			<StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+				<Label Content="Launch Sidesaver on startup:" VerticalAlignment="Center" MinWidth="165"/>
+				<CheckBox IsChecked="{Binding RunOnStartup}" VerticalAlignment="Center"></CheckBox>
 			</StackPanel>
 
 			<StackPanel Orientation="Horizontal">
