@@ -105,6 +105,20 @@ namespace sidesaver
 			}
 		}
 
+		private bool _saveBackupOnRename;
+		public bool SaveBackupOnRename
+		{
+			get => _saveBackupOnRename;
+			set
+			{
+				if (_saveBackupOnRename != value)
+				{
+					_saveBackupOnRename = value;
+					OnPropertyChanged();
+				}
+			}
+		}
+
 		private bool _useOverrideSaveLocation;
 		public bool UseOverrideSaveLocation
 		{

@@ -42,6 +42,12 @@ namespace sidesaver
 			set => _currentSettings._runInBackgroundPopupRan = value;
 		}
 
+		public bool SaveBackupOnRename
+		{
+			get => _currentSettings._saveBackupOnRename;
+			set => _currentSettings._saveBackupOnRename = value;
+		}
+
 		public bool UseOverrideSaveLocation
 		{
 			get => _currentSettings._useOverrideSaveLocation;
@@ -107,6 +113,7 @@ namespace sidesaver
 			public bool _runOnStartup;
 			public bool _runInBackground;
 			public bool _runInBackgroundPopupRan;
+			public bool _saveBackupOnRename;
 			public bool _useOverrideSaveLocation;
 			public string _overrideSaveLocation;
 			public List<string> _watchedProgramList = new List<string>();

@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 
 namespace sidesaver
 {
@@ -29,6 +28,7 @@ namespace sidesaver
 		public FileBackupHandler(string file)
 		{
 			InitializeForFile(file);
+			OnFileCreated(this, new FileSystemEventArgs(WatcherChangeTypes.Created, _fileWatcher.Path, _fileWatcher.Filter));
 		}
 
 		private void TeardownFileWatcher()
@@ -57,6 +57,8 @@ namespace sidesaver
 			_fileWatcher.Renamed += OnFileRenamed;
 			_fileWatcher.EnableRaisingEvents = true;
 
+			Console.WriteLine(@"Now watching {0}", file);
+
 			_fileRegex = new Regex($"(?:{Path.GetFileNameWithoutExtension(_watchedFile)}.backup)(\\d+)(?:{Path.GetExtension(_watchedFile)})");
 		}
 
@@ -67,16 +69,19 @@ namespace sidesaver
 
 		private void OnFileCreated(object sender, FileSystemEventArgs e)
 		{
+			Console.WriteLine(@"CREATED EVENT: {0}", FilePath);
 			CopyAndSaveFile(e.FullPath);
 		}
 
 		private void OnFileChanged(object sender, FileSystemEventArgs e)
 		{
+			Console.WriteLine(@"CHANGED EVENT: {0}", FilePath);
 			CopyAndSaveFile(e.FullPath);
 		}
 
 		private void OnFileRenamed(object sender, RenamedEventArgs e)
 		{
+			Console.WriteLine(@"RENAMED EVENT: {0}", FilePath);
 			var eventArgs = new BackupFileRenamedEventArgs() {NewName = e.FullPath, OriginalName = e.OldFullPath};
 			FileRenamed?.Invoke(this, eventArgs);
 
@@ -87,6 +92,13 @@ namespace sidesaver
 
 			var oldBackups = GenerateListOfBackups(oldFileRegex);
 			ReconcileExistingBackups(oldBackups, false);
+
+			// Photoshop does some weird stuff...
+			// When you change a file (possibly only large files?), we actually
+			// get a renamed event. So we're going to give the user the option
+			// to make a backup on rename too
+			if (SideSaver.instance.Settings.SaveBackupOnRename)
+				CopyAndSaveFile(e.FullPath);
 		}
 
 		private void CopyAndSaveFile(string file)

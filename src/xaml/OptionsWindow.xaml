@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:sidesaver"
         mc:Ignorable="d"
-        Title="Sidesaver - Settings" Height="375" MinHeight="340" Width="500" WindowStartupLocation="CenterOwner">
+        Title="Sidesaver - Settings" Height="390" MinHeight="350" Width="500" WindowStartupLocation="CenterOwner">
 	<Window.Resources>
 		<local:BackupCountConverter x:Key="BackupCountConverter"/>
 		<Style x:Key="StyleButton_Base" TargetType="Button">
@@ -37,17 +37,23 @@
 
 			<StackPanel Orientation="Horizontal" Margin="0,5,0,0">
 				<Label Content="Stay open in background:" VerticalAlignment="Center" MinWidth="165"/>
-				<CheckBox IsChecked="{Binding RunInBackground}" VerticalAlignment="Center"></CheckBox>
+				<CheckBox IsChecked="{Binding RunInBackground}" VerticalAlignment="Center"/>
 			</StackPanel>
 
 			<StackPanel Orientation="Horizontal" Margin="0,5,0,0">
 				<Label Content="Launch Sidesaver on startup:" VerticalAlignment="Center" MinWidth="165"/>
-				<CheckBox IsChecked="{Binding RunOnStartup}" VerticalAlignment="Center"></CheckBox>
+				<CheckBox IsChecked="{Binding RunOnStartup}" VerticalAlignment="Center"/>
+			</StackPanel>
+
+			<StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+				<Label Content="Save backup on file rename:" VerticalAlignment="Center" MinWidth="165"/>
+				<CheckBox IsChecked="{Binding SaveBackupOnRename}" VerticalAlignment="Center"
+				          ToolTip="Recommended if using SideSaver with large Adobe Photoshop files."/>
 			</StackPanel>
 
 			<StackPanel Orientation="Horizontal">
 				<Label Content="Override save location:" VerticalAlignment="Center" MinWidth="165"/>
-				<CheckBox IsChecked="{Binding UseOverrideSaveLocation}" VerticalAlignment="Center"></CheckBox>
+				<CheckBox IsChecked="{Binding UseOverrideSaveLocation}" VerticalAlignment="Center"/>
 			</StackPanel>
 
 			<DockPanel>

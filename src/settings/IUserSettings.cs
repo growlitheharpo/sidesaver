@@ -12,6 +12,7 @@ namespace sidesaver
 		bool RunInBackground { get; set; }
 		bool RunInBackgroundPopShown { get; set; }
 
+		bool SaveBackupOnRename { get; set; }
 		bool UseOverrideSaveLocation { get; set; }
 		string OverrideSaveLocationPath { get; set; }
 
@@ -29,6 +30,8 @@ namespace sidesaver
 			public bool RunOnStartup { get => false; set => throw new InvalidOperationException(); }
 			public bool RunInBackground { get => true; set => throw new InvalidOperationException(); }
 			public bool RunInBackgroundPopShown { get => false; set => throw new InvalidOperationException(); }
+
+			public bool SaveBackupOnRename { get => true; set => throw new InvalidOperationException(); }
 			public bool UseOverrideSaveLocation { get => false; set => throw new InvalidOperationException(); }
 			public string OverrideSaveLocationPath { get => Environment.CurrentDirectory; set => throw new InvalidOperationException(); }
 
@@ -47,6 +50,7 @@ namespace sidesaver
 			dst.RunOnStartup = src.RunOnStartup;
 			dst.RunInBackground = src.RunInBackground;
 			dst.RunInBackgroundPopShown = src.RunInBackgroundPopShown;
+			dst.SaveBackupOnRename = src.SaveBackupOnRename;
 			dst.UseOverrideSaveLocation = src.UseOverrideSaveLocation;
 			dst.OverrideSaveLocationPath = src.OverrideSaveLocationPath;
 
