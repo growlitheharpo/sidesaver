@@ -170,8 +170,9 @@ namespace sidesaver
 
 		public void CreateSettingsMenu()
 		{
-			NotifyChangedUserSettings tmpSettings = new NotifyChangedUserSettings(_settings);
-			OptionsWindow newWin = OptionsWindow.Create(tmpSettings);
+			var tmpSettings = new PersistentUserSettings(_settings);
+
+			var newWin = OptionsWindow.Create(tmpSettings);
 			newWin.Owner = Application.Current.MainWindow;
 			newWin.Show();
 			newWin.Focus();
@@ -179,8 +180,8 @@ namespace sidesaver
 
 		public void CommitNewSettings(IUserSettings newSettings)
 		{
-			_settings.ApplySettings(newSettings);
-			if (newSettings is NotifyChangedUserSettings changeSettings)
+			SettingsUtils.CopySettings(newSettings, _settings);
+			if (newSettings is PersistentUserSettings changeSettings)
 				changeSettings.ResetPendingChanges();
 
 			ApplyStartupSetting(_settings.RunOnStartup);
@@ -206,7 +207,7 @@ namespace sidesaver
 			{
 				if (shouldRunOnStartup)
 				{
-					string path = $"\"{Assembly.GetEntryAssembly().Location}\"";
+					string path = $"\"{Assembly.GetEntryAssembly()?.Location}\"";
 					key.SetValue(startupValueName, path);
 				}
 				else

@@ -13,14 +13,14 @@ namespace sidesaver
 	{
 		private static OptionsWindow s_instance;
 
-		public static OptionsWindow Create(NotifyChangedUserSettings settings)
+		public static OptionsWindow Create(PersistentUserSettings settings)
 		{
 			return s_instance ?? new OptionsWindow(settings);
 		}
 
-		private readonly NotifyChangedUserSettings _settings;
+		private readonly PersistentUserSettings _settings;
 
-		private OptionsWindow(NotifyChangedUserSettings settings)
+		private OptionsWindow(PersistentUserSettings settings)
 		{
 			if (s_instance != null)
 				throw new InvalidOperationException();

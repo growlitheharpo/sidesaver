@@ -17,7 +17,6 @@ namespace sidesaver
 		string OverrideSaveLocationPath { get; set; }
 
 		void ResetToDefault();
-		void ApplySettings(IUserSettings other);
 	}
 
 	public static class SettingsUtils

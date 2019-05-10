@@ -8,6 +8,8 @@ using System.Text.RegularExpressions;
 
 namespace sidesaver.serialization
 {
+	public class SimpleSerializeFieldAttribute : Attribute { }
+
 	static class SimpleSerializer
 	{
 		public static void WriteToFile<T>(StreamWriter w, T obj, BindingFlags flags)
@@ -17,9 +19,12 @@ namespace sidesaver.serialization
 
 			foreach (var m in mems)
 			{
-				if (m.FieldType == typeof(List<string>))
+				if (m.GetCustomAttribute<SimpleSerializeFieldAttribute>() == null)
+					continue;
+
+				if (m.GetValue(obj) is ICollection<string> list)
 				{
-					WriteStringArray(w, m.Name, m.GetValue(obj) as List<string>);
+					WriteStringArray(w, m.Name, list);
 				}
 				else
 				{
@@ -53,7 +58,14 @@ namespace sidesaver.serialization
 				if (member == null)
 					continue;
 
-				if (member.FieldType == typeof(int))
+				if (member.FieldType.GetInterfaces().Any(x => x == typeof(ICollection<string>)))
+				{
+					if (member.GetValue(targetObj) == null)
+						throw new TypeLoadException($"Trying to populate member array \"{member.FieldType.Name}\" but it was null.");
+
+					ReadStringArray(member.GetValue(targetObj) as ICollection<string>, memVal);
+				}
+				else if (member.FieldType == typeof(int))
 					member.SetValue(targetObj, int.Parse(memVal));
 				else if (member.FieldType == typeof(float))
 					member.SetValue(targetObj, float.Parse(memVal));
@@ -61,14 +73,12 @@ namespace sidesaver.serialization
 					member.SetValue(targetObj, bool.Parse(memVal));
 				else if (member.FieldType == typeof(string))
 					member.SetValue(targetObj, memVal);
-				else if (member.FieldType == typeof(List<string>))
-					ReadStringArray(member.GetValue(targetObj) as List<string>, memVal);
 				else
 					throw new TypeLoadException($"Type ({member.FieldType.Name} is not serializable by default.");
 			}
 		}
 
-		private static void WriteStringArray(StreamWriter w, string name, List<string> list)
+		private static void WriteStringArray(StreamWriter w, string name, ICollection<string> list)
 		{
 			if (w == null)
 				return;
@@ -92,14 +102,15 @@ namespace sidesaver.serialization
 			w.WriteLine(sb.ToString());
 		}
 
-		private static void ReadStringArray(List<string> v, string lineVal)
+		private static void ReadStringArray(ICollection<string> v, string lineVal)
 		{
 			if (v == null)
 				return;
 
 			v.Clear();
-			string[] vals = lineVal.Split(',');
-			v.AddRange(vals);
+			var vals = lineVal.Split(',');
+			foreach (var l in vals)
+				v.Add(l);
 		}
 	}
 }

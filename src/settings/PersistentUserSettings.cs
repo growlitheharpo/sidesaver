@@ -1,46 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using sidesaver.serialization;
 
 namespace sidesaver
 {
-	class PersistentUserSettings : IUserSettings
+	public class PersistentUserSettings : IUserSettings, INotifyPropertyChanged
 	{
 		// Actual fields that back our settings and get serialized:
-		private int _backupCount;
-		private bool _runOnStartup;
-		private bool _runInBackground;
-		private bool _runInBackgroundPopupRan;
-		private bool _saveBackupOnRename;
-		private bool _useOverrideSaveLocation;
-		private string _overrideSaveLocation;
-		private List<string> _watchedProgramList = new List<string>();
+		[SimpleSerializeField] private int _backupCount;
+		[SimpleSerializeField] private bool _runOnStartup;
+		[SimpleSerializeField] private bool _runInBackground;
+		[SimpleSerializeField] private bool _runInBackgroundPopupRan;
+		[SimpleSerializeField] private bool _saveBackupOnRename;
+		[SimpleSerializeField] private bool _useOverrideSaveLocation;
+		[SimpleSerializeField] private string _overrideSaveLocation;
+		[SimpleSerializeField] private BindingList<string> _watchedProgramsBindable = new BindingList<string>();
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		// Don't serialize the pending changes flag
+		private bool _hasPendingChanges;
+		public bool HasPendingChanges
+		{
+			get => _hasPendingChanges;
+			set => OnPropertyChanged(ref _hasPendingChanges, value);
+		}
 
 		public int BackupCount
 		{
 			get => _backupCount;
-			set => _backupCount = value;
-		}
-
-		public IList<string> WatchedPrograms
-		{
-			get => _watchedProgramList;
-			set => _watchedProgramList = value.ToList();
+			set => OnPropertyChanged(ref _backupCount, value);
 		}
 
 		public bool RunOnStartup
 		{
 			get => _runOnStartup;
-			set => _runOnStartup = value;
+			set => OnPropertyChanged(ref _runOnStartup, value);
 		}
 
 		public bool RunInBackground
 		{
 			get => _runInBackground;
-			set => _runInBackground = value;
+			set => OnPropertyChanged(ref _runInBackground, value);
 		}
 
 		public bool RunInBackgroundPopShown
@@ -52,35 +57,54 @@ namespace sidesaver
 		public bool SaveBackupOnRename
 		{
 			get => _saveBackupOnRename;
-			set => _saveBackupOnRename = value;
+			set => OnPropertyChanged(ref _saveBackupOnRename, value);
 		}
 
 		public bool UseOverrideSaveLocation
 		{
 			get => _useOverrideSaveLocation;
-			set => _useOverrideSaveLocation = value;
+			set => OnPropertyChanged(ref _useOverrideSaveLocation, value);
 		}
 
 		public string OverrideSaveLocationPath
 		{
 			get => _overrideSaveLocation;
-			set => _overrideSaveLocation = value;
+			set => OnPropertyChanged(ref _overrideSaveLocation, value);
 		}
 
-		public void ResetToDefault()
+		public IList<string> WatchedPrograms
 		{
-			ApplySettings(SettingsUtils.Defaults);
+			get => _watchedProgramsBindable;
+			set => WatchedProgramsBindable = new BindingList<string>(value);
 		}
 
-		public void ApplySettings(IUserSettings other)
+		public BindingList<string> WatchedProgramsBindable
 		{
-			SettingsUtils.CopySettings(other, this);
+			get => _watchedProgramsBindable;
+			set => OnPropertyChanged(ref _watchedProgramsBindable, value);
 		}
 
 		public PersistentUserSettings()
 		{
 			ResetToDefault();
 			LoadFromDisk();
+			ResetPendingChanges();
+		}
+
+		public PersistentUserSettings(IUserSettings other)
+		{
+			SettingsUtils.CopySettings(other, this);
+			ResetPendingChanges();
+		}
+
+		public void ResetToDefault()
+		{
+			SettingsUtils.CopySettings(SettingsUtils.Defaults, this);
+		}
+
+		public void ResetPendingChanges()
+		{
+			HasPendingChanges = false;
 		}
 
 		public bool LoadFromDisk()
@@ -110,6 +134,22 @@ namespace sidesaver
 			using (var s = new FileStream(filePath, FileMode.Create))
 			using (var sw = new StreamWriter(s))
 				SimpleSerializer.WriteToFile(sw, this, BindingFlags.Instance | BindingFlags.NonPublic);
+		}
+
+		protected void OnPropertyChanged<T>(ref T targetVar, T newVal, bool useRefEquals = false, [CallerMemberName] string propertyName = null)
+		{
+			if (useRefEquals && ReferenceEquals(targetVar, newVal))
+				return;
+
+			if (!useRefEquals && targetVar != null && targetVar.Equals(newVal))
+				return;
+
+			targetVar = newVal;
+
+			if (propertyName != null && propertyName != "HasPendingChanges")
+				HasPendingChanges = true;
+
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
 }

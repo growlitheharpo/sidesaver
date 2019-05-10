@@ -73,7 +73,6 @@
     <Compile Include="src\serialization\SimpleSerializer.cs" />
     <Compile Include="src\settings\IUserSettings.cs" />
     <Compile Include="src\settings\PersistentUserSettings.cs" />
-    <Compile Include="src\settings\NotifyChangedUserSettings.cs" />
     <Compile Include="src\xaml\CustomWindowControl.xaml.cs">
       <DependentUpon>CustomWindowControl.xaml</DependentUpon>
     </Compile>
