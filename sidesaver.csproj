@@ -70,6 +70,7 @@
     <Compile Include="src\AssemblyResolver.cs" />
     <Compile Include="src\filesystem\BackupFileRenamedEventArgs.cs" />
     <Compile Include="src\filesystem\ProgramWatcher.cs" />
+    <Compile Include="src\serialization\SimpleSerializer.cs" />
     <Compile Include="src\settings\IUserSettings.cs" />
     <Compile Include="src\settings\PersistentUserSettings.cs" />
     <Compile Include="src\settings\NotifyChangedUserSettings.cs" />

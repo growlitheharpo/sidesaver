@@ -3,61 +3,68 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
+using sidesaver.serialization;
 
 namespace sidesaver
 {
 	class PersistentUserSettings : IUserSettings
 	{
-		private readonly SerializedBacking _currentSettings;
+		// Actual fields that back our settings and get serialized:
+		private int _backupCount;
+		private bool _runOnStartup;
+		private bool _runInBackground;
+		private bool _runInBackgroundPopupRan;
+		private bool _saveBackupOnRename;
+		private bool _useOverrideSaveLocation;
+		private string _overrideSaveLocation;
+		private List<string> _watchedProgramList = new List<string>();
 
 		public int BackupCount
 		{
-			get => _currentSettings._backupCount;
-			set => _currentSettings._backupCount = value;
+			get => _backupCount;
+			set => _backupCount = value;
 		}
 
 		public IList<string> WatchedPrograms
 		{
-			get => _currentSettings._watchedProgramList;
-			set => _currentSettings._watchedProgramList = value.ToList();
+			get => _watchedProgramList;
+			set => _watchedProgramList = value.ToList();
 		}
 
 		public bool RunOnStartup
 		{
-			get => _currentSettings._runOnStartup;
-			set => _currentSettings._runOnStartup = value;
+			get => _runOnStartup;
+			set => _runOnStartup = value;
 		}
 
 		public bool RunInBackground
 		{
-			get => _currentSettings._runInBackground;
-			set => _currentSettings._runInBackground = value;
+			get => _runInBackground;
+			set => _runInBackground = value;
 		}
 
 		public bool RunInBackgroundPopShown
 		{
-			get => _currentSettings._runInBackgroundPopupRan;
-			set => _currentSettings._runInBackgroundPopupRan = value;
+			get => _runInBackgroundPopupRan;
+			set => _runInBackgroundPopupRan = value;
 		}
 
 		public bool SaveBackupOnRename
 		{
-			get => _currentSettings._saveBackupOnRename;
-			set => _currentSettings._saveBackupOnRename = value;
+			get => _saveBackupOnRename;
+			set => _saveBackupOnRename = value;
 		}
 
 		public bool UseOverrideSaveLocation
 		{
-			get => _currentSettings._useOverrideSaveLocation;
-			set => _currentSettings._useOverrideSaveLocation = value;
+			get => _useOverrideSaveLocation;
+			set => _useOverrideSaveLocation = value;
 		}
 
 		public string OverrideSaveLocationPath
 		{
-			get => _currentSettings._overrideSaveLocation;
-			set => _currentSettings._overrideSaveLocation = value;
+			get => _overrideSaveLocation;
+			set => _overrideSaveLocation = value;
 		}
 
 		public void ResetToDefault()
@@ -72,9 +79,7 @@ namespace sidesaver
 
 		public PersistentUserSettings()
 		{
-			_currentSettings = new SerializedBacking();
 			ResetToDefault();
-
 			LoadFromDisk();
 		}
 
@@ -90,7 +95,7 @@ namespace sidesaver
 
 			using (var s = File.OpenRead(filePath))
 			using (var sr = new StreamReader(s))
-				_currentSettings.ReadFromFile(sr);
+				SimpleSerializer.ReadFromFile(sr, this, BindingFlags.Instance | BindingFlags.NonPublic);
 
 			return true;
 		}
@@ -104,111 +109,7 @@ namespace sidesaver
 			var filePath = Path.Combine(dataPath, "settings.ini");
 			using (var s = new FileStream(filePath, FileMode.Create))
 			using (var sw = new StreamWriter(s))
-				_currentSettings.WriteToFile(sw);
-		}
-
-		private class SerializedBacking
-		{
-			public int _backupCount;
-			public bool _runOnStartup;
-			public bool _runInBackground;
-			public bool _runInBackgroundPopupRan;
-			public bool _saveBackupOnRename;
-			public bool _useOverrideSaveLocation;
-			public string _overrideSaveLocation;
-			public List<string> _watchedProgramList = new List<string>();
-
-			public void WriteToFile(StreamWriter w)
-			{
-				Type t = GetType();
-				var mems = t.GetFields(BindingFlags.Public | BindingFlags.Instance);
-
-				foreach (var m in mems)
-				{
-					if (m.FieldType == typeof(List<string>))
-					{
-						WriteStringArray(w, m.Name, m.GetValue(this) as List<string>);
-					}
-					else
-					{
-						string s = $"[{m.Name}] {m.GetValue(this)}";
-						w.WriteLine(s);
-					}
-				}
-			}
-
-			private void WriteStringArray(StreamWriter w, string name, List<string> list)
-			{
-				if (w == null)
-					return;
-
-				if (list == null)
-					return;
-
-				StringBuilder sb = new StringBuilder();
-				sb.AppendFormat("[{0}] ", name);
-				foreach (var s in list)
-				{
-					if (s.Contains(','))
-						throw new InvalidOperationException("Cannot serialize an array with commas in it.");
-
-					sb.AppendFormat("{0},", s);
-				}
-
-				if (list.Count > 0)
-					sb.Remove(sb.Length - 1, 1); // remove the last comma
-
-				w.Write(sb.ToString());
-			}
-
-			private void ReadStringArray(List<string> v, string lineVal)
-			{
-				if (v == null)
-					return;
-
-				v.Clear();
-				string[] vals = lineVal.Split(',');
-				v.AddRange(vals);
-			}
-
-			public void ReadFromFile(StreamReader r)
-			{
-				Type t = GetType();
-				var mems = t.GetFields(BindingFlags.Public | BindingFlags.Instance);
-
-				Regex reg = new Regex("(\\[)(\\w+)(\\])( )(.+)");
-
-				while (!r.EndOfStream)
-				{
-					string line = r.ReadLine();
-					if (line == null)
-						continue;
-
-					Match m = reg.Match(line);
-					if (m.Length == 0)
-						continue;
-
-					var memName = m.Groups[2].Value;
-					var memVal = m.Groups[5].Value;
-
-					var member = mems.FirstOrDefault(x => x.Name == memName);
-					if (member == null)
-						continue;
-
-					if (member.FieldType == typeof(int))
-						member.SetValue(this, int.Parse(memVal));
-					else if (member.FieldType == typeof(float))
-						member.SetValue(this, float.Parse(memVal));
-					else if (member.FieldType == typeof(bool))
-						member.SetValue(this, bool.Parse(memVal));
-					else if (member.FieldType == typeof(string))
-						member.SetValue(this, memVal);
-					else if (member.FieldType == typeof(List<string>))
-						ReadStringArray(member.GetValue(this) as List<string>, memVal);
-					else
-						throw new TypeLoadException($"Type ({member.FieldType.Name} is not serializable by default.");
-				}
-			}
+				SimpleSerializer.WriteToFile(sw, this, BindingFlags.Instance | BindingFlags.NonPublic);
 		}
 	}
 }

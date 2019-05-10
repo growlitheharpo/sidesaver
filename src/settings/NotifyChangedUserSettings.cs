@@ -11,82 +11,28 @@ namespace sidesaver
 		public bool HasPendingChanges
 		{
 			get => _hasPendingChanges;
-			set
-			{
-				if (_hasPendingChanges != value)
-				{
-					_hasPendingChanges = value;
-					OnPropertyChanged();
-				}
-			}
+			set => OnPropertyChanged(ref _hasPendingChanges, value);
 		}
 
 		private int _backupCount;
 		public int BackupCount
 		{
 			get => _backupCount;
-			set
-			{
-				if (_backupCount != value)
-				{
-					_backupCount = value;
-					OnPropertyChanged();
-				}
-			}
-		}
-
-		private BindingList<string> _watchedProgramsBindable;
-		public BindingList<string> WatchedProgramsBindable
-		{
-			get => _watchedProgramsBindable;
-			set
-			{
-				if (!ReferenceEquals(_watchedProgramsBindable, value))
-				{
-					_watchedProgramsBindable = new BindingList<string>(value);
-					OnPropertyChanged();
-				}
-			}
-		}
-		public IList<string> WatchedPrograms
-		{
-			get => _watchedProgramsBindable;
-			set
-			{
-				if (!ReferenceEquals(_watchedProgramsBindable, value))
-				{
-					_watchedProgramsBindable = new BindingList<string>(value);
-					OnPropertyChanged();
-				}
-			}
+			set => OnPropertyChanged(ref _backupCount, value);
 		}
 
 		private bool _runOnStartup;
 		public bool RunOnStartup
 		{
 			get => _runOnStartup;
-			set
-			{
-				if (_runOnStartup != value)
-				{
-					_runOnStartup = value;
-					OnPropertyChanged();
-				}
-			}
+			set => OnPropertyChanged(ref _runOnStartup, value);
 		}
 
 		private bool _runInBackground;
 		public bool RunInBackground
 		{
 			get => _runInBackground;
-			set
-			{
-				if (_runInBackground != value)
-				{
-					_runInBackground = value;
-					OnPropertyChanged();
-				}
-			} 
+			set => OnPropertyChanged(ref _runInBackground, value);
 		}
 
 		public bool RunInBackgroundPopShown { get; set; }
@@ -95,42 +41,33 @@ namespace sidesaver
 		public string OverrideSaveLocationPath
 		{
 			get => _overrideSaveLocationPath;
-			set
-			{
-				if (_overrideSaveLocationPath != value)
-				{
-					_overrideSaveLocationPath = value;
-					OnPropertyChanged();
-				}
-			}
+			set => OnPropertyChanged(ref _overrideSaveLocationPath, value);
 		}
 
 		private bool _saveBackupOnRename;
 		public bool SaveBackupOnRename
 		{
 			get => _saveBackupOnRename;
-			set
-			{
-				if (_saveBackupOnRename != value)
-				{
-					_saveBackupOnRename = value;
-					OnPropertyChanged();
-				}
-			}
+			set => OnPropertyChanged(ref _saveBackupOnRename, value);
 		}
 
 		private bool _useOverrideSaveLocation;
 		public bool UseOverrideSaveLocation
 		{
 			get => _useOverrideSaveLocation;
-			set 
-			{
-				if (_useOverrideSaveLocation != value)
-				{
-					_useOverrideSaveLocation = value;
-					OnPropertyChanged();
-				}
-			}
+			set => OnPropertyChanged(ref _useOverrideSaveLocation, value);
+		}
+
+		private BindingList<string> _watchedProgramsBindable;
+		public BindingList<string> WatchedProgramsBindable
+		{
+			get => _watchedProgramsBindable;
+			set => OnPropertyChanged(ref _watchedProgramsBindable, value);
+		}
+		public IList<string> WatchedPrograms
+		{
+			get => _watchedProgramsBindable;
+			set => OnPropertyChanged(ref _watchedProgramsBindable, new BindingList<string>(value));
 		}
 
 		public NotifyChangedUserSettings(IUserSettings other = null)
@@ -163,8 +100,16 @@ namespace sidesaver
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		protected void OnPropertyChanged<T>(ref T targetVar, T newVal, bool useRefEquals = false, [CallerMemberName] string propertyName = null)
 		{
+			if (useRefEquals && ReferenceEquals(targetVar, newVal))
+				return;
+
+			if (!useRefEquals && targetVar != null && targetVar.Equals(newVal))
+				return;
+
+			targetVar = newVal;
+
 			if (propertyName != null && propertyName != "HasPendingChanges")
 				HasPendingChanges = true;
 
