@@ -24,7 +24,7 @@ namespace sidesaver
 			_icon.Text = Resources.TrayIcon_idle;
 			_icon.DoubleClick += OnDoubleClick;
 
-			_icon.ContextMenu = BuildContextMenu();
+			_icon.ContextMenuStrip = BuildContextMenu();
 
 			_main.Items.ListChanged += OnListChanged;
 		}
@@ -40,18 +40,18 @@ namespace sidesaver
 			_icon.ShowBalloonTip(timeout, null, msg, ToolTipIcon.Info);
 		}
 
-		private ContextMenu BuildContextMenu()
+		private ContextMenuStrip BuildContextMenu()
 		{
-			MenuItem mu1 = new MenuItem("Show Window") {Index = 0};
+			ToolStripMenuItem mu1 = new ToolStripMenuItem("Show Window");
 			mu1.Click += OnDoubleClick;
 
-			MenuItem mu2 = new MenuItem("Exit") {Index = 1};
+			ToolStripMenuItem mu2 = new ToolStripMenuItem("Exit");
 			mu2.Click += OnExitClick;
 
-			ContextMenu c = new ContextMenu();
-			c.MenuItems.Add(mu1);
-			c.MenuItems.Add("-");
-			c.MenuItems.Add(mu2);
+			ContextMenuStrip c = new ContextMenuStrip();
+			c.Items.Add(mu1);
+			c.Items.Add("-");
+			c.Items.Add(mu2);
 
 			return c;
 		}
