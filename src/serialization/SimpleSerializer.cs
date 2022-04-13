@@ -14,6 +14,9 @@ namespace sidesaver.serialization
 	{
 		public static void WriteToFile<T>(StreamWriter w, T obj, BindingFlags flags)
 		{
+			if (obj == null)
+				return;
+
 			Type t = obj.GetType();
 			var mems = t.GetFields(flags);
 
@@ -36,6 +39,9 @@ namespace sidesaver.serialization
 
 		public static void ReadFromFile<T>(StreamReader r, T targetObj, BindingFlags flags)
 		{
+			if (targetObj == null)
+				return;
+
 			Type t = targetObj.GetType();
 			var mems = t.GetFields(flags);
 
@@ -43,7 +49,7 @@ namespace sidesaver.serialization
 
 			while (!r.EndOfStream)
 			{
-				string line = r.ReadLine();
+				string? line = r.ReadLine();
 				if (line == null)
 					continue;
 
@@ -102,7 +108,7 @@ namespace sidesaver.serialization
 			w.WriteLine(sb.ToString());
 		}
 
-		private static void ReadStringArray(ICollection<string> v, string lineVal)
+		private static void ReadStringArray(ICollection<string>? v, string lineVal)
 		{
 			if (v == null)
 				return;

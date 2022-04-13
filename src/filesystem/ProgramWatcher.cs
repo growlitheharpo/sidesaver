@@ -3,9 +3,11 @@ using System.Diagnostics;
 using System.Management;
 using System.Linq;
 using System.Threading;
+using System.Runtime.Versioning;
 
 namespace sidesaver
 {
+	[SupportedOSPlatform("windows")]
 	internal class ProgramWatcher
 	{
 		private readonly TrayIcon _iconRef;
@@ -18,8 +20,8 @@ namespace sidesaver
 
 		private class ProcessInfo
 		{
-			public Process process;
-			public string path;
+			public Process? process;
+			public string path = "";
 		}
 
 		public ProgramWatcher(TrayIcon icon)

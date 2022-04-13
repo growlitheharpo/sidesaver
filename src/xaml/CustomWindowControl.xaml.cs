@@ -11,7 +11,7 @@ namespace sidesaver
 	/// </summary>
 	public partial class CustomWindowControl : UserControl, INotifyPropertyChanged
 	{
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		private Window ParentWindow => Window.GetWindow(this);
 
@@ -55,7 +55,7 @@ namespace sidesaver
 			Loaded -= OnLoaded;
 		}
 
-		private void OnParentWindowStateChanged(object sender, EventArgs e)
+		private void OnParentWindowStateChanged(object? sender, EventArgs? e)
 		{
 			if (ParentWindow == null)
 				return;
@@ -84,7 +84,7 @@ namespace sidesaver
 			SystemCommands.CloseWindow(ParentWindow);
 		}
 
-		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = "")
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}

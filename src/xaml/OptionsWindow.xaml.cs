@@ -11,7 +11,7 @@ namespace sidesaver
 	/// </summary>
 	public partial class OptionsWindow
 	{
-		private static OptionsWindow s_instance;
+		private static OptionsWindow? s_instance;
 
 		public static OptionsWindow Create(PersistentUserSettings settings)
 		{
@@ -42,7 +42,7 @@ namespace sidesaver
 			OKButton.Focus();
 		}
 
-		private void OnClosed(object sender, EventArgs e)
+		private void OnClosed(object? sender, EventArgs? e)
 		{
 			Closed -= OnClosed;
 			s_instance = null;
@@ -80,9 +80,9 @@ namespace sidesaver
 			Close();
 		}
 
-		private void MenuItem_OnClick(object sender, RoutedEventArgs e)
+		private void MenuItem_OnClick(object? sender, RoutedEventArgs? e)
 		{
-			FrameworkElement realSender = sender as FrameworkElement;
+			FrameworkElement? realSender = sender as FrameworkElement;
 
 			if (realSender?.DataContext is string filePath)
 				_settings.WatchedPrograms.Remove(filePath);

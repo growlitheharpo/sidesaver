@@ -17,10 +17,10 @@ namespace sidesaver
 		[SimpleSerializeField] private bool _runInBackgroundPopupRan;
 		[SimpleSerializeField] private bool _saveBackupOnRename;
 		[SimpleSerializeField] private bool _useOverrideSaveLocation;
-		[SimpleSerializeField] private string _overrideSaveLocation;
+		[SimpleSerializeField] private string _overrideSaveLocation = string.Empty;
 		[SimpleSerializeField] private BindingList<string> _watchedProgramsBindable = new BindingList<string>();
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		// Don't serialize the pending changes flag
 		private bool _hasPendingChanges;
@@ -136,7 +136,7 @@ namespace sidesaver
 				SimpleSerializer.WriteToFile(sw, this, BindingFlags.Instance | BindingFlags.NonPublic);
 		}
 
-		protected void OnPropertyChanged<T>(ref T targetVar, T newVal, bool useRefEquals = false, [CallerMemberName] string propertyName = null)
+		protected void OnPropertyChanged<T>(ref T targetVar, T newVal, bool useRefEquals = false, [CallerMemberName] string propertyName = "")
 		{
 			if (useRefEquals && ReferenceEquals(targetVar, newVal))
 				return;
@@ -146,7 +146,7 @@ namespace sidesaver
 
 			targetVar = newVal;
 
-			if (propertyName != null && propertyName != "HasPendingChanges")
+			if (!string.IsNullOrEmpty(propertyName) && propertyName != "HasPendingChanges")
 				HasPendingChanges = true;
 
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

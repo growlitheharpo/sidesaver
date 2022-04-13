@@ -9,14 +9,17 @@ namespace sidesaver
 {
 	public class SideSaver
 	{
+#pragma warning disable CS8618
+		// Don't warn that this might be null. We initialize it in Main().
 		public static SideSaver instance { get; private set; }
+#pragma warning restore CS8618
 
 		public BindingList<string> Items { get; }
 		public IUserSettings Settings => _settings;
 
 		private readonly PersistentUserSettings _settings;
 		private readonly Dictionary<int, FileBackupHandler> _fileHandlers;
-		private readonly ProgramWatcher _watcher;
+		private readonly ProgramWatcher? _watcher;
 		private readonly TrayIcon _icon;
 		private bool _exiting;
 
@@ -35,7 +38,11 @@ namespace sidesaver
 			_fileHandlers = new Dictionary<int, FileBackupHandler>();
 			_settings = new PersistentUserSettings();
 			_icon = new TrayIcon(this);
-			_watcher = new ProgramWatcher(_icon);
+
+			if (OperatingSystem.IsWindows())
+			{
+				_watcher = new ProgramWatcher(_icon);
+			}
 
 			CommitNewSettings(_settings);
 
@@ -57,13 +64,17 @@ namespace sidesaver
 			win.Closing += OnMainWindowClose;
 		}
 
-		private void OnMainWindowClose(object sender, CancelEventArgs e)
+		private void OnMainWindowClose(object? sender, CancelEventArgs? e)
 		{
 			if (sender is MainWindow win && !_exiting)
 			{
 				if (Settings.RunInBackground)
 				{
-					e.Cancel = true;
+					if (e != null)
+					{
+						e.Cancel = true;
+					}
+
 					win.Hide();
 
 					if (!Settings.RunInBackgroundPopShown)
@@ -83,7 +94,11 @@ namespace sidesaver
 				f.Value.Dispose();
 			}
 
-			_watcher.Kill();
+			if (OperatingSystem.IsWindows())
+			{
+				_watcher?.Kill();
+			}
+
 			_icon.Kill();
 		}
 
@@ -184,11 +199,17 @@ namespace sidesaver
 				changeSettings.ResetPendingChanges();
 
 			ApplyStartupSetting(_settings.RunOnStartup);
-			_watcher.UpdateWatchedPrograms(_settings.WatchedPrograms);
+			if (OperatingSystem.IsWindows())
+			{
+				_watcher?.UpdateWatchedPrograms(_settings.WatchedPrograms);
+			}
 		}
 
 		private void ApplyStartupSetting(bool shouldRunOnStartup)
 		{
+			if (!OperatingSystem.IsWindows())
+				return;
+
 			const string startupKeyName = @"Software\\Microsoft\\Windows\\CurrentVersion\\Run";
 			const string startupValueName = "Sidesaver";
 

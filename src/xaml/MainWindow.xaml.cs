@@ -24,6 +24,9 @@ namespace sidesaver
 
 		private void GenerateIconImage()
 		{
+			if (!OperatingSystem.IsWindows())
+				return;
+
 			var u = new Uri("resources/main_black.ico", UriKind.Relative);
 			using (var resourceStream = Application.GetResourceStream(u)?.Stream)
 			{
@@ -52,7 +55,7 @@ namespace sidesaver
 
 		private void MenuItem_OnClick(object sender, RoutedEventArgs e)
 		{
-			FrameworkElement realSender = sender as FrameworkElement;
+			FrameworkElement? realSender = sender as FrameworkElement;
 
 			if (realSender?.DataContext is string filePath)
 				SideSaver.instance.StopWatching(filePath);

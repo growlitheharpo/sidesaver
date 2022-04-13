@@ -1,5 +1,7 @@
-﻿using System;
+﻿using sidesaver.utilities;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,16 +16,16 @@ namespace sidesaver
 		public string FilePath => _watchedFile;
 
 		private Regex _fileRegex;
-		private string _watchedFile;
 		private FileSystemWatcher _fileWatcher;
+		private string _watchedFile;
 
 		private class BackupData
 		{
-			public string filePath;
+			public string filePath = string.Empty;
 			public int fileNumber;
 		}
 
-		public event BackupFileRenamedHandler FileRenamed;
+		public event BackupFileRenamedHandler? FileRenamed;
 
 		public FileBackupHandler(string file)
 		{
@@ -42,13 +44,14 @@ namespace sidesaver
 			}
 		}
 
+		[MemberNotNull(nameof(_fileWatcher), nameof(_watchedFile), nameof(_fileRegex))]
 		private void InitializeForFile(string file)
 		{
 			_watchedFile = file;
 
 			_fileWatcher = new FileSystemWatcher()
 			{
-				Path = Path.GetDirectoryName(_watchedFile),
+				Path = Path.GetDirectoryName(_watchedFile) ?? string.Empty,
 				Filter = Path.GetFileName(_watchedFile)
 			};
 
@@ -106,7 +109,7 @@ namespace sidesaver
 			if (file != _watchedFile)
 				throw new ArgumentException($"New file \"{file}\" did not match base file \"{_watchedFile}\".");
 
-			ReconcileExistingBackups(null, true);
+			ReconcileExistingBackups(Array.Empty<BackupData>(), true);
 			string newFile = BuildBackupStringForFile(1);
 
 			File.Copy(_watchedFile, newFile, true);
@@ -114,16 +117,18 @@ namespace sidesaver
 
 		private string GetBackupDirectory()
 		{
-			if (SideSaver.instance.Settings.UseOverrideSaveLocation)
-				return SideSaver.instance.Settings.OverrideSaveLocationPath;
-			return Path.GetDirectoryName(_watchedFile);
+			var settings = SideSaver.instance.Settings;
+			if (settings.UseOverrideSaveLocation && !string.IsNullOrEmpty(settings.OverrideSaveLocationPath))
+				return settings.OverrideSaveLocationPath;
+
+			return Path.GetDirectoryName(_watchedFile) ?? string.Empty;
 		}
 
-		private List<BackupData> GenerateListOfBackups(Regex pattern)
+		private IList<BackupData> GenerateListOfBackups(Regex pattern)
 		{
 			string dir = GetBackupDirectory();
 			if (dir == null)
-				return null;
+				return Array.Empty<BackupData>();
 
 			// Build a list of all the current backups so we can reconcile them
 			var allFiles = Directory.GetFiles(dir, "*" + Path.GetExtension(_watchedFile));
@@ -151,11 +156,12 @@ namespace sidesaver
 			return currentBackups;
 		}
 
-		private void ReconcileExistingBackups(List<BackupData> currentBackups, bool addingNewItem)
+		private void ReconcileExistingBackups(IList<BackupData> currentBackups, bool addingNewItem)
 		{
-			if (currentBackups == null)
+			if (currentBackups.Count == 0)
 				currentBackups = GenerateListOfBackups(_fileRegex);
-			if (currentBackups == null)
+
+			if (currentBackups.Count == 0)
 				return;
 
 			// Get our max backup count from sidesaver.instance
@@ -207,7 +213,7 @@ namespace sidesaver
 			StringBuilder sb = new StringBuilder();
 
 			sb.Append(GetBackupDirectory());
-			sb.Append("\\");
+			sb.Append('\\');
 			sb.Append(Path.GetFileNameWithoutExtension(_watchedFile));
 			sb.Append(".backup");
 

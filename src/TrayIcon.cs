@@ -15,10 +15,13 @@ namespace sidesaver
 			_main = saverInstance;
 			_icon = new NotifyIcon();
 			
-			var u = new Uri("resources/main_white.ico", UriKind.Relative);
-			using (var stream = System.Windows.Application.GetResourceStream(u)?.Stream)
-				if (stream != null)
-					_icon.Icon = new System.Drawing.Icon(stream);
+			if (OperatingSystem.IsWindows())
+			{
+				var u = new Uri("resources/main_white.ico", UriKind.Relative);
+				using (var stream = System.Windows.Application.GetResourceStream(u)?.Stream)
+					if (stream != null)
+						_icon.Icon = new System.Drawing.Icon(stream);
+			}
 
 			_icon.Visible = true;
 			_icon.Text = Resources.TrayIcon_idle;
@@ -56,12 +59,12 @@ namespace sidesaver
 			return c;
 		}
 
-		private void OnDoubleClick(object sender, EventArgs e)
+		private void OnDoubleClick(object? sender, EventArgs? e)
 		{
 			_main.ShowWindow();
 		}
 
-		private void OnListChanged(object sender, ListChangedEventArgs e)
+		private void OnListChanged(object? sender, ListChangedEventArgs? e)
 		{
 			if (_main.Items.Count == 0)
 				_icon.Text = Resources.TrayIcon_idle;
@@ -71,7 +74,7 @@ namespace sidesaver
 				_icon.Text = string.Format(Resources.TrayIcon_plural_files, _main.Items.Count);
 		}
 
-		private void OnExitClick(object sender, EventArgs e)
+		private void OnExitClick(object? sender, EventArgs? e)
 		{
 			_main.ShutdownProgram();
 		}
